@@ -403,6 +403,19 @@ function hideTooltip(){
 document.addEventListener("scroll", hideTooltip, { passive:true });
 document.addEventListener("click", () => hideTooltip());
 
+function bindTooltip(el, getText){
+  if (!el) return;
+
+  el.addEventListener("mouseenter", (e) => showTooltip(el, getText(), e));
+  el.addEventListener("mouseleave", hideTooltip);
+
+  // mobile / tap
+  el.addEventListener("pointerdown", (e) => {
+    e.stopPropagation();
+    showTooltip(el, getText(), e);
+  });
+}
+
 /* ========= 1) CONFIG & DATA ========= */
 let count = 0;
 try {
@@ -589,27 +602,13 @@ function interact() {
   speak(line, "💖 兔兔感受到你了…");
 }
 
-/* ========= Tooltip binding ========= */
-function bindTooltip(el, getText){
-  if (!el) return;
-
-  el.addEventListener("mouseenter", (e) => showTooltip(el, getText(), e));
-  el.addEventListener("mouseleave", hideTooltip);
-
-  el.addEventListener("click", (e) => {
-    e.stopPropagation();
-    showTooltip(el, getText(), e);
-  });
-}
-
-/* ========= Achievements tooltip + click ========= */
+/* ========= 3) ACHIEVEMENTS ========= */
 function setAchvTooltip(el, text){
   if (!el) return;
   bindTooltip(el, () => text);
   el.setAttribute("aria-label", text);
 }
 
-/* ========= 3) ACHIEVEMENTS ========= */
 function checkAchievements(autoOpen = false) {
   [26, 99, 520].forEach((m) => {
     const slot = $("slot" + m);
@@ -621,15 +620,14 @@ function checkAchievements(autoOpen = false) {
         if (autoOpen) openLetter(m);
       }
 
-      setAchvTooltip(slot, `✅ 已解锁：点击查看成就（${m}）`);
+      setAchvTooltip(slot, `✅ 已解锁：点击查看成就（${m} 次点击）`);
       slot.onclick = (e) => { e.stopPropagation(); openLetter(m); };
+      slot.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLetter(m); } };
 
     } else {
-      setAchvTooltip(slot, `🔒 解锁于 ${m} 次点击`);
-      slot.onclick = (e) => {
-        e.stopPropagation();
-        speak(`解锁于 ${m} 次点击。现在是 ${count} 次。`, "✨ 兔兔在数数…");
-      };
+      setAchvTooltip(slot, `🔒 解锁条件：累计 ${m} 次点击（当前 ${count}）`);
+      slot.onclick = (e) => { e.stopPropagation(); speak(`解锁需要 ${m} 次点击。现在是 ${count} 次。`, "✨ 兔兔在数数…"); };
+      slot.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); speak(`解锁需要 ${m} 次点击。现在是 ${count} 次。`, "✨ 兔兔在数数…"); } };
     }
   });
 
@@ -673,9 +671,12 @@ document.querySelectorAll("button[data-monologue]").forEach(btn => {
 attachHeartTo(rabbitEl);
 document.querySelectorAll("button[data-monologue]").forEach(attachHeartTo);
 
-/* Hover / tap tooltip for day badge */
-const TOGETHER_START = new Date(2026, 0, 23);
-const START_STR = "23/01/2026";
+/* =========================================================
+   ✅ 在一起天数（最终正确版）
+   起始：26/01/2026（当天 = 第 1 天）
+   ========================================================= */
+const TOGETHER_START = new Date(2026, 0, 26); // Jan=0
+const START_STR = "26/01/2026";
 
 function startOfDay(d){
   const x = new Date(d);
@@ -685,14 +686,19 @@ function startOfDay(d){
 function daysTogether(){
   const today = startOfDay(new Date());
   const start = startOfDay(TOGETHER_START);
-  const diff = today - start;
-  if (diff < 0) return 0;
-  return Math.floor(diff / 86400000) + 1;
+  const diffMs = today - start;
+  const diffDays = Math.floor(diffMs / 86400000);
+  return diffDays + 1; // start day = Day 1
 }
 
 bindTooltip(dayBadge, () => `开始于 ${START_STR}`);
 
-/* Milestones */
+function updateDayBadge(){
+  const day = daysTogether();
+  dayBadge.textContent = `💞 在一起的第 ${day} 天`;
+}
+
+/* Milestones (still based on daysTogether) */
 const MILESTONES = [
   { day: 1, msg: "从今天起，我们有了专属的第 1 天。", status: "🫶 第一天也要甜甜的！", slotId: "slot26", icon: "🫶" },
   { day: 7, msg: "一周啦，我们继续黏黏～", status: "✨ 一周纪念达成！", slotId: "slot99", icon: "✨" },
@@ -700,6 +706,7 @@ const MILESTONES = [
   { day: 99, msg: "99 天：爱不减，反而更深。", status: "🌹 99 天啦，继续长长久久", openLetter: 99 },
   { day: 520, msg: "520 天：我愿意一直一直。", status: "💎 520 天：我爱你", openLetter: 520 }
 ];
+
 const DAILY_LINES = [
   "✨ 兔兔在基地乖乖等你...",
   "🥰 今天也要被我爱着。",
@@ -718,10 +725,6 @@ function saveUnlocked(obj){
   try{ localStorage.setItem(getUnlockedKey(), JSON.stringify(obj)); }catch(e){}
 }
 
-function updateDayBadge(){
-  const day = daysTogether();
-  dayBadge.textContent = `💞 在一起的第 ${day} 天`;
-}
 function updateStatusLineSmart(){
   if (statusTimer) return;
   const day = daysTogether();
@@ -767,7 +770,9 @@ function scheduleNextMidnightRefresh(){
   }, delay);
 }
 
-/* Secret achievement */
+/* =========================================================
+   ✅ 隐藏成就（仍按原设定日期，不改）
+   ========================================================= */
 function isSameYMD(a, b){
   return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
 }
@@ -826,10 +831,11 @@ function restoreSecretAchievement(){
       overlay.style.display = "flex";
     };
   } else {
-    setAchvTooltip(slot, "🕳️ 隐藏成就");
-    slot.onclick = (e) => { e.stopPropagation(); showTooltip(slot, "🕳️ 隐藏成就", e); };
+    setAchvTooltip(slot, "🕳️ 隐藏成就：满足条件才会出现");
+    slot.onclick = (e) => { e.stopPropagation(); showTooltip(slot, "🕳️ 隐藏成就：满足条件才会出现", e); };
   }
 }
+function updateSecretTooltip(){ /* handled via restore/check */ }
 
 function checkSecretOnRabbitClick(){
   const today = new Date();
@@ -852,10 +858,11 @@ rabbitEl.addEventListener("keydown", (e) => {
   }
 });
 
-/* Start */
+/* ========= Start ========= */
 restoreSecretAchievement();
 updateEnvironment();
 checkAchievements(false);
+
 updateDayBadge();
 unlockMilestoneIfNeeded();
 updateStatusLineSmart();
