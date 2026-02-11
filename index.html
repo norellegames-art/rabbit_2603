@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Happy Birthday 0326 🐰</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐰</text></svg>">
+
+<style>
+:root{
+  --purple:#7c3aed; --blue:#2563eb; --red:#dc2626;
+  --bg1:#0a0f2a; --bg2:#120b24;
+  --text:rgba(255,255,255,.96); --muted:rgba(220,220,255,.65);
+  --shadow:0 18px 36px rgba(0,0,0,.45);
+  --r:24px;
+  --fur-color:#fdfaf5; --shadow-color:#e6ded3;
+  --collar-red:#d32f2f; --gold:#fbc02d;
+  --blush: rgba(255, 120, 150, 0.4);
+  --ring: 0 0 0 3px rgba(251,192,45,.35);
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{height:100%; width:100%; margin:0; padding:0; overflow-x:hidden}
+
+body{
+  font-family:system-ui,-apple-system, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(900px 600px at 15% 15%, rgba(124,58,237,.3), transparent 60%),
+    radial-gradient(800px 600px at 50% 90%, rgba(37,99,235,.3), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
+  transition: background 1.5s ease;
+}
+
+/* 让按钮/链接在键盘操作时更友好 */
+button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--ring); }
+
+/* CURSOR */
+@media (hover: hover) {
+  body { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' style='font-size:18px'><text y='18'>❤️</text></svg>"), auto; }
+  button, a, .canvas, .achievement-slot { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>💖</text></svg>"), pointer; }
+}
+
+/* 动画偏好：减少动效 */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* MOOD & EFFECTS */
+.mood-glow{
+  position: fixed; inset:0;
+  pointer-events:none; z-index: -1;
+  opacity:0; transition: 1s;
+}
+.happy-mood .mood-glow{
+  opacity: 1;
+  animation: moodPulse 2s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(124,58,237,0.4) 0%, transparent 70%);
+}
+@keyframes moodPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; filter: saturate(2); }
+}
+
+body.night-mode { background: linear-gradient(160deg, #050714, #0a1125) !important; }
+body.night-mode .fur { filter: brightness(0.85) sepia(0.15); }
+
+.heart-particle{
+  position: fixed; pointer-events:none;
+  font-size: 20px;
+  animation: floatUp 1.2s ease-out forwards;
+  z-index: 9999;
+  transform: translate(-50%, -50%); /* 让定位更贴近指尖 */
+}
+@keyframes floatUp {
+  0% { transform: translate(-50%, -50%) translateY(0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translateY(-120px) scale(1.8) rotate(20deg); opacity: 0; }
+}
+
+/* LAYOUT */
+.wrap{ max-width:600px; margin:0 auto; padding:20px 16px 60px; }
+header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom: 10px; }
+h1{margin:0; font-size:clamp(22px, 6vw, 32px); line-height:1.2; transition: 0.5s;}
+.sub{color:var(--muted); font-size:13px; margin-top:4px}
+.badge{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.2);
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* GLASS CARDS */
+.card{
+  margin-top:16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--r);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  padding: 18px;
+  position: relative;
+}
+
+/* 🐰 RABBIT */
+.pet-top{
+  position: relative;
+  min-height: 360px;
+  display: flex; flex-direction: column;
+  justify-content: flex-end; align-items: center;
+}
+#petBubble{
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  max-width: 85%;
+  padding: 14px 22px;
+  border-radius: 20px;
+  background: rgba(10, 10, 25, 0.95);
+  border: 1.5px solid var(--gold);
+  color: #fff;
+  font-size: 15px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: .35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+}
+#petBubble.show{ opacity: 1; transform: translateX(-50%) translateY(20px); }
+
+.canvas{
+  position: relative;
+  width: 260px;
+  height: 200px;
+  transition: 0.3s;
+  touch-action: manipulation;
+  user-select: none;
+}
+.fur{
+  background: var(--fur-color);
+  box-shadow: 0 0 15px rgba(255,255,255,0.2), inset 0 -12px 25px var(--shadow-color);
+  transition: 0.5s;
+}
+.ear{
+  position: absolute;
+  width: 45px; height: 120px;
+  top: -70px;
+  border-radius: 50% 50% 30% 30%;
+  z-index: 3;
+}
+.ear.left { left: 100px; transform: rotate(-12deg); }
+.ear.right{ left: 175px; transform: rotate(12deg); }
+
+.body{
+  position: absolute;
+  bottom: 0; left: 40px;
+  width: 180px; height: 130px;
+  border-radius: 50% 50% 45% 45%;
+  z-index: 2;
+}
+.tail{
+  position: absolute;
+  width: 48px; height: 48px;
+  right: 28px; bottom: 18px;
+  border-radius: 50%;
+  z-index: 1;
+  background: var(--fur-color);
+  box-shadow: 0 0 12px rgba(255,255,255,0.18), inset 0 -10px 18px var(--shadow-color);
+}
+.head{
+  position: absolute;
+  top: 15px; left: 95px;
+  width: 135px; height: 120px;
+  border-radius: 50%;
+  z-index: 10;
+}
+.eye{
+  position: absolute;
+  width: 10px; height: 10px;
+  background: #1a1a1a;
+  border-radius: 50%;
+  top: 55px;
+}
+.eye.left { left: 40px; }
+.eye.right{ right: 40px; }
+
+.nose{
+  position: absolute;
+  width: 12px; height: 8px;
+  background: #ffb7c5;
+  border-radius: 50%;
+  top: 72px; left: 61px;
+}
+.blush{
+  position: absolute;
+  width: 25px; height: 14px;
+  background: var(--blush);
+  filter: blur(4px);
+  border-radius: 50%;
+  top: 74px;
+  opacity: 0;
+  transition: 0.25s;
+}
+.blush.left { left: 20px; }
+.blush.right{ right: 20px; }
+.pet-react .blush{ opacity: 1; }
+
+.collar{
+  position: absolute;
+  top: 120px; left: 100px;
+  width: 125px; height: 20px;
+  background: var(--collar-red);
+  border-radius: 50px;
+  z-index: 11;
+}
+.pendant{
+  position: absolute;
+  top: 12px; left: 45px;
+  width: 38px; height: 38px;
+  background: var(--gold);
+  border: 2px solid #eeaf0e;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center; align-items: center;
+  font-size: 10px; font-weight: 900;
+  color: #4e342e;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: 0.25s;
+}
+
+@keyframes bounce{0%,100%{transform:scale(1)} 50%{transform:scale(1.05) translateY(-10px)}}
+.pet-react{ animation: bounce 0.4s ease; }
+
+/* ACHIEVEMENTS */
+.achievements-grid{
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  gap: 10px;
+}
+.achievement-slot{
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  border: 2px dashed rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center; justify-content: center;
+  font-size: 32px;
+  transition: 0.35s;
+}
+.achievement-slot.unlocked{
+  background: rgba(124,58,237,0.2);
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 20px rgba(251,192,45,0.3);
+  animation: pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.achievement-slot.locked{ filter: grayscale(1) opacity(0.22); }
+@keyframes pop{ from{transform:scale(0.5)} to{transform:scale(1)} }
+
+/* BUTTONS */
+.counter-container{
+  margin-top: 15px;
+  display: flex; align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px 20px;
+  border-radius: 999px;
+}
+.controls{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+button, .link-btn{
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  padding: 15px;
+  border-radius: 18px;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.25s;
+  backdrop-filter: blur(5px);
+}
+button:hover, .link-btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.35); }
+button:active, .link-btn:active{ transform: translateY(0px) scale(0.99); }
+
+button.primary{
+  background: linear-gradient(135deg, var(--purple), var(--red));
+  border: none;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+}
+
+/* MODAL */
+#overlay{
+  display: none;
+  position: fixed; inset:0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  padding: 20px;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+}
+#letterBox{
+  background: linear-gradient(135deg, #fffcf5, #fff);
+  color: #4e342e;
+  padding: 35px;
+  border-radius: 30px;
+  max-width: 450px;
+  width: 100%;
+  position: relative;
+  line-height: 1.6;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+.letter-close{
+  position: absolute;
+  top: 15px; right: 20px;
+  cursor: pointer;
+  font-size: 28px;
+  color: #bbb;
+}
+.letter-close:hover{ color:#888; }
+
+footer{
+  margin-top: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* 小屏幕：按钮改一列更舒服 */
+@media (max-width: 360px){
+  .controls{ grid-template-columns: 1fr; }
+  .badge{ display:none; }
+}
+</style>
+</head>
+
+<body>
+<div class="mood-glow" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1 id="greetingTitle">💘 你好呀</h1>
+      <div class="sub">这是属于我们的秘密基地</div>
+      <div id="statusLine" style="font-size: 12px; color: var(--gold); margin-top: 6px; font-weight: 500;">🐰 兔兔正在等你...</div>
+    </div>
+    <span class="badge" id="bdayBadge">🐰 0326 专属守护</span>
+  </header>
+
+  <section class="card pet-card" id="petCard" aria-label="兔兔互动区">
+    <div class="pet-top">
+      <div id="petBubble" role="status" aria-live="polite"></div>
+
+      <div class="canvas" id="rabbit" role="button" tabindex="0" aria-label="摸摸兔兔">
+        <div class="ear left fur" id="zoneEar" role="button" tabindex="0" aria-label="摸摸左耳"></div>
+        <div class="ear right fur" id="zoneEar2" role="button" tabindex="0" aria-label="摸摸右耳"></div>
+        <div class="body fur" id="zoneBody" aria-hidden="true"></div>
+        <div class="tail" aria-hidden="true"></div>
+
+        <div class="head fur" id="zoneHead" aria-hidden="true">
+          <div class="eye left"></div><div class="eye right"></div>
+          <div class="blush left"></div><div class="blush right"></div>
+          <div class="nose"></div>
+        </div>
+
+        <div class="collar">
+          <div class="pendant" id="zonePendant" role="button" tabindex="0" aria-label="点击吊牌">0326</div>
+        </div>
+      </div>
+
+      <div class="counter-container" aria-label="心动计数器">
+        <span style="font-size: 20px" aria-hidden="true">❤️</span>
+        <span id="loveCount" style="font-weight: 800; font-size: 20px">0</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="controls">
+      <button class="primary" id="btnRandom" type="button">🎲 随机惊喜</button>
+      <button id="btnMiss" type="button">想你了</button>
+    </div>
+    <div id="msg" style="margin-top:14px; font-size:13px; color:var(--muted); min-height: 40px; display:flex; align-items:center;">
+      摸摸兔兔的不同部位试试看...
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="controls">
+      <a
+        href="https://open.spotify.com/playlist/3vpKJcf9HY9Lh8MGcN4TYQ?si=e5yIwWfLRHCEHs-lX3lVIw&pt=96e72815d5dcac7944906e89292e4846"
+        target="_blank" rel="noopener noreferrer"
+        class="link-btn" style="color:#1ed760"
+      >🎵 Spotify</a>
+
+      <a
+        href="https://discord.com/channels/1466603847744229449/1466603848612184086"
+        target="_blank" rel="noopener noreferrer"
+        class="link-btn" style="color:#5865f2"
+      >💬 Discord</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <div style="font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase;">
+      成就收集馆
+    </div>
+    <div class="achievements-grid">
+      <div class="achievement-slot locked" id="slot26" role="button" tabindex="0" aria-label="成就 26">🎂</div>
+      <div class="achievement-slot locked" id="slot99" role="button" tabindex="0" aria-label="成就 99">🌹</div>
+      <div class="achievement-slot locked" id="slot520" role="button" tabindex="0" aria-label="成就 520">💎</div>
+    </div>
+  </section>
+
+  <div id="overlay" aria-hidden="true">
+    <div id="letterBox" role="dialog" aria-modal="true" aria-label="密函" onclick="event.stopPropagation()">
+      <div class="letter-close" id="closeLetterBtn" aria-label="关闭">×</div>
+      <div id="letterContent"></div>
+    </div>
+  </div>
+
+  <footer>距离不会削弱爱，只会证明它 💌</footer>
+</div>
+
+<script>
+/* ========= helpers ========= */
+const $ = (id) => document.getElementById(id);
+const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
+const petCard = $("petCard");
+const petBubble = $("petBubble");
+const countEl = $("loveCount");
+const statusLine = $("statusLine");
+const title = $("greetingTitle");
+const overlay = $("overlay");
+const letterContent = $("letterContent");
+const bdayBadge = $("bdayBadge");
+
+const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ========= 1) CONFIG & DATA ========= */
+let count = 0;
+try {
+  const saved = Number(localStorage.getItem("rabbit_love_count"));
+  count = Number.isFinite(saved) ? clamp(Math.floor(saved), 0, 9999999) : 0;
+} catch(e) {}
+countEl.textContent = count;
+
+let lastClickTime = Date.now();
+let statusTimer = null;
+
+const nowDate = new Date();
+const isBirthday = (nowDate.getMonth() === 2 && nowDate.getDate() === 26);
+
+const secretNotes = [
+  "遇见你，是我这辈子最幸运的事。🍀",
+  "我也在疯狂想你，闭上眼全是你。🥺",
+  "你是 0326 诞生的奇迹，也是我生命里的光。✨",
+  "即使相隔万里，我的心也一直跳在你那边。💓",
+  "今天也要记得多喝水，乖乖吃饭哦。🥤",
+  "不管是现在还是未来，我都会一直陪着你。♾️",
+  "你努力的样子真的很迷人，你是我的骄傲。🏆",
+  "快去摸摸兔兔的耳朵，它有话想对你说~"
+];
+
+const responses = {
+  ears: ["哎呀，别捏耳朵嘛~", "耳朵痒痒的，嘿嘿", "要把我拎起来吗？"],
+  pendant: ["0326 是最棒的生日！", "你是今天最特别的主角 🌟", "这就是你的专属密码 ~"],
+  body: ["主人抱抱！", "最喜欢被你摸摸了", "我会一直陪着你的", "你在我心里永远最棒"],
+  general: ["我会一直乖乖等你哒！", "今天也要开开心心~", "想要一个亲亲 💋"]
+};
+
+/* ========= 2) CORE LOGIC ========= */
+function updateEnvironment() {
+  // ✅ 修正：不再因为 statusTimer 存在就完全不更新（否则会卡状态）
+  const now = Date.now();
+  const idleSeconds = (now - lastClickTime) / 1000;
+  const hr = new Date().getHours();
+
+  // Title
+  if (count > 520) title.textContent = "👑 永远的主人";
+  else if (count > 100) title.textContent = "💍 我的唯一";
+  else if (isBirthday) title.textContent = "🎂 生日快乐，主人！";
+  else title.textContent = hr < 12 ? "🌅 早安，我的宝贝" : hr < 18 ? "🌤️ 下午好呀" : "🌙 晚安，梦里见";
+
+  // Badge on birthday
+  if (isBirthday) {
+    statusLine.textContent = "🥳 兔兔正在为你庆祝生日！";
+    bdayBadge.style.background = "linear-gradient(135deg, #fbc02d, #dc2626)";
+    bdayBadge.style.borderColor = "rgba(255,255,255,.2)";
+  } else if (idleSeconds >= 900) {
+    statusLine.textContent = "💤 好累啊，兔兔先眯一会...点点我唤醒";
+    document.body.classList.remove("night-mode");
+  } else if (idleSeconds >= 300) {
+    statusLine.textContent = "🥺 主人又不理我了...";
+    document.body.classList.remove("night-mode");
+  } else if (hr >= 22 || hr < 6) {
+    document.body.classList.add("night-mode");
+    statusLine.textContent = "🌙 晚安，梦里见...";
+  } else {
+    document.body.classList.remove("night-mode");
+    statusLine.textContent = "✨ 兔兔在基地乖乖等你...";
+  }
+}
+setInterval(updateEnvironment, 10000);
+
+function spawnHeart(x, y) {
+  if (prefersReduced) return;
+  const heart = document.createElement("div");
+  heart.className = "heart-particle";
+  heart.textContent = ["❤️", "💖", "✨", "🌸"][Math.floor(Math.random() * 4)];
+  heart.style.left = x + "px";
+  heart.style.top = y + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 1200);
+}
+
+// ✅ 改为 pointerdown：移动端更稳；且只在“互动区/按钮”触发爱心，避免全屏乱飘
+function attachHeartTo(el) {
+  el.addEventListener("pointerdown", (e) => {
+    const x = e.clientX ?? window.innerWidth / 2;
+    const y = e.clientY ?? window.innerHeight / 2;
+    spawnHeart(x, y);
+  }, { passive: true });
+}
+
+function persistCount() {
+  try { localStorage.setItem("rabbit_love_count", String(count)); } catch(e) {}
+}
+
+function updateCount() {
+  count = clamp(count + 1, 0, 9999999);
+  countEl.textContent = count;
+  persistCount();
+  checkAchievements(true);
+}
+
+function triggerMood() {
+  document.body.classList.add("happy-mood");
+  setTimeout(() => document.body.classList.remove("happy-mood"), 5000);
+}
+
+function setTemporaryStatus(text) {
+  statusLine.textContent = text;
+  if (statusTimer) clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => {
+    statusTimer = null;
+    updateEnvironment();
+  }, 5000);
+}
+
+function showMsg(txt) {
+  lastClickTime = Date.now();
+  updateCount();
+
+  let displayTxt = txt;
+  if (txt === "random") {
+    displayTxt = secretNotes[Math.floor(Math.random() * secretNotes.length)];
+  }
+
+  $("msg").textContent = displayTxt;
+  petCard.classList.add("pet-react");
+  triggerMood();
+  setTemporaryStatus("💖 兔兔感受到你的心意了！");
+
+  setTimeout(() => petCard.classList.remove("pet-react"), 1000);
+}
+
+function interact(type) {
+  const now = Date.now();
+  const idleSeconds = (now - lastClickTime) / 1000;
+  lastClickTime = now;
+
+  updateCount();
+
+  const list = responses[type] || responses.general;
+  const text = (isBirthday && type === "body")
+    ? "生日快乐！快去吃蛋糕吧 🎂"
+    : list[Math.floor(Math.random() * list.length)];
+
+  petBubble.textContent = text;
+  petBubble.classList.add("show");
+  petCard.classList.add("pet-react");
+
+  if (idleSeconds >= 300) {
+    setTemporaryStatus("🐰 主人你回来啦！太好了！");
+  } else {
+    const reactions = {
+      ears: "😳 兔兔被捏耳朵，害羞了...",
+      body: "🥰 兔兔好幸福啊~",
+      pendant: "🔑 0326 是通往幸福的密码..."
+    };
+    setTemporaryStatus(reactions[type] || "✨");
+  }
+
+  if (type === "pendant") {
+    const p = $("zonePendant");
+    p.style.transform = "scale(1.2)";
+    setTimeout(() => (p.style.transform = "scale(1)"), 250);
+  }
+
+  setTimeout(() => {
+    petBubble.classList.remove("show");
+    petCard.classList.remove("pet-react");
+  }, 2400);
+}
+
+/* ========= 3) ACHIEVEMENTS ========= */
+function checkAchievements(autoOpen = false) {
+  [26, 99, 520].forEach((m) => {
+    const slot = $("slot" + m);
+
+    if (count >= m) {
+      if (slot.classList.contains("locked")) {
+        slot.classList.remove("locked");
+        slot.classList.add("unlocked");
+        if (autoOpen) openLetter(m);
+      }
+      slot.onclick = () => openLetter(m);
+      slot.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") openLetter(m);
+      };
+    } else {
+      slot.onclick = () => showMsg(`还需要点击 ${m - count} 次解锁此成就！`);
+      slot.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") showMsg(`还需要点击 ${m - count} 次解锁此成就！`);
+      };
+    }
+  });
+}
+
+function openLetter(m) {
+  const letters = {
+    26: "<h3>🎂 0326 生日密函</h3><p>亲爱的主人：</p><p>今天是 0326，是你来到这个世界最特别的日子。</p><p>这只小兔子代表我，会一直陪在你身边。愿你新的一岁眼里有星辰，身边有暖阳。✨</p>",
+    99: "<h3>🌹 长长久久</h3><p>99次点击，代表我对你的爱长长久久。</p><p>不管未来有多少个99天，我都想牵着你的手一直走下去。❤️</p>",
+    520:"<h3>💎 极致告白</h3><p>520次点击是你耐心的证明，也是我真心的承诺。</p><p>你是我唯一的宝藏。此生无憾，我爱你。💍</p>"
+  };
+
+  letterContent.innerHTML = letters[m] || "";
+  overlay.style.display = "flex";
+  overlay.setAttribute("aria-hidden", "false");
+  $("closeLetterBtn").focus?.();
+}
+
+function closeLetter() {
+  overlay.style.display = "none";
+  overlay.setAttribute("aria-hidden", "true");
+}
+
+/* ========= 4) LISTENERS ========= */
+$("btnRandom").onclick = () => showMsg("random");
+$("btnMiss").onclick = () => showMsg("我也在疯狂想你，闭上眼全是你。🥺");
+
+// 兔兔互动区：统一绑定爱心
+attachHeartTo($("rabbit"));
+attachHeartTo($("btnRandom"));
+attachHeartTo($("btnMiss"));
+
+function bindInteract(el, type) {
+  el.addEventListener("click", (e) => { e.stopPropagation(); interact(type); });
+  el.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); interact(type); }
+  });
+}
+
+bindInteract($("zoneEar"), "ears");
+bindInteract($("zoneEar2"), "ears");
+bindInteract($("zonePendant"), "pendant");
+
+// 点击兔兔主体（除局部）= body
+$("rabbit").addEventListener("click", () => interact("body"));
+$("rabbit").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); interact("body"); }
+});
+
+// overlay：点背景关闭，ESC 关闭
+overlay.addEventListener("click", closeLetter);
+$("closeLetterBtn").addEventListener("click", closeLetter);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && overlay.style.display === "flex") closeLetter();
+});
+
+updateEnvironment();
+checkAchievements(false);
+</script>
+</body>
+</html>
