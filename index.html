@@ -291,13 +291,11 @@ footer{
 
       <div class="canvas" id="rabbit" role="button" tabindex="0" aria-label="摸摸兔兔">
         <div class="rabbit-wrap">
-          <!-- ✅ 把图片放到同目录：rabbit.png（或改成你的路径） -->
           <img src="rabbit.png" alt="兔兔" class="rabbit-img" draggable="false" />
-
-          <div class="hit ear left" data-part="ears" aria-label="摸摸左耳" role="button" tabindex="0"></div>
-          <div class="hit ear right" data-part="ears" aria-label="摸摸右耳" role="button" tabindex="0"></div>
-          <div class="hit body" data-part="body" aria-label="摸摸身体" role="button" tabindex="0"></div>
-          <div class="hit collar" data-part="pendant" aria-label="点击项圈" role="button" tabindex="0"></div>
+          <div class="hit ear left" data-part="ears" role="button" tabindex="0" aria-label="摸摸左耳"></div>
+          <div class="hit ear right" data-part="ears" role="button" tabindex="0" aria-label="摸摸右耳"></div>
+          <div class="hit body" data-part="body" role="button" tabindex="0" aria-label="摸摸身体"></div>
+          <div class="hit collar" data-part="pendant" role="button" tabindex="0" aria-label="点击项圈"></div>
         </div>
       </div>
 
@@ -529,13 +527,11 @@ function setTemporaryStatus(text) {
 function showMsg(txt) {
   lastClickTime = Date.now();
   updateCount();
-
   $("msg").textContent = txt;
 
   rabbitEl.classList.add("pet-react");
   triggerMood();
   setTemporaryStatus("💖 兔兔感受到你的心意了！");
-
   setTimeout(() => rabbitEl.classList.remove("pet-react"), 700);
 }
 
