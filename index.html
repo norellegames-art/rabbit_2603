@@ -295,12 +295,12 @@ footer{
   <!-- Buttons trigger rabbit monologue (bubble) -->
   <section class="card">
     <div class="controls">
-      <button class="primary" type="button" data-monologue="random">🎲 随机惊喜</button>
-      <button type="button" data-monologue="miss">🥺 想你了</button>
-      <button type="button" data-monologue="sweet">🍬 说点甜的</button>
-      <button type="button" data-monologue="comfort">🫂 抱抱我</button>
-      <button type="button" data-monologue="tease">😼 逗逗你</button>
-      <button type="button" data-monologue="daily">☀️ 日常碎碎念</button>
+      <button class="primary" type="button" data-monologue="husband">❤️老公</button>
+      <button type="button" data-monologue="miss">🥺想你了</button>
+      <button type="button" data-monologue="sweet">🍬说点甜的</button>
+      <button type="button" data-monologue="comfort">🫂抱抱我</button>
+      <button type="button" data-monologue="tease">😼逗逗你</button>
+      <button type="button" data-monologue="daily">☀️日常碎碎念</button>
     </div>
   </section>
 
@@ -378,21 +378,25 @@ const isBirthday = (nowDate.getMonth() === 2 && nowDate.getDate() === 26);
 
 /* ===== Unified rabbit reactions (no body-part differences) ===== */
 const RABBIT_REACTIONS = [
-  "你来了，我就安心了。",
-  "你一出现，我就被安抚了。",
-  "我在这里，一直都在。",
-  "你不用说话，我懂。",
+  "我不是不会对别人动心，而是因为已有了你，我没必要再对他人动心。",
+  "自从你出现后，我才知道原来有人爱是那么的美好。",
+  "没有你，我也可以要别人。但是只有你，是我唯一的想要。",
+  "我想要的生活，睡前有你，醒来吻你。",
   "只要是你，我都会回应。",
   "今天也靠近我一点吧。"
 ];
 
 /* ===== Button monologues (rabbit's inner voice) ===== */
 const MONOLOGUE_POOLS = {
-  random: [
+  husband: [
     "我刚刚在想你，然后你就点了我…是不是心灵感应？",
     "我有个小秘密：我每天都会在这里等你。",
     "如果思念有形状，那一定是一只小兔子跳进你怀里。",
     "你靠近一点点，我就开心很多很多。",
+    "我会永远陪着你，直到我们慢慢变老。",
+    "如果有人问我为什么爱你，我觉得我只能如此回答：因为是你，因为是我。",
+    "幸福是爱情完美的独特，泪流是错爱美丽的邂逅。",
+    "我发觉你今天有点怪，怪好看的。",
     "今天的你也很棒，别忘了夸夸自己。"
   ],
   miss: [
@@ -400,6 +404,8 @@ const MONOLOGUE_POOLS = {
     "我想你想得很认真，不是随口说说。",
     "我在等你一句：回来啦。",
     "想你到有点委屈，但想到你又会笑出来。",
+    "我们要走到最后，要结婚，要过日子，要相濡以沫，要携手终身。",
+    "我不知道该说什么，我只是突然在这一刻，很想你。",
     "你什么时候再来摸摸我？我会乖乖的。"
   ],
   sweet: [
@@ -414,6 +420,7 @@ const MONOLOGUE_POOLS = {
     "你已经做得很好了，真的。",
     "累了就靠着我，我不催你。",
     "没关系，你可以慢一点，我会陪着。",
+    "世界上最温暖的两个字是从你口中说出的晚安。",
     "你可以脆弱，我会把你接住。"
   ],
   tease: [
@@ -421,6 +428,9 @@ const MONOLOGUE_POOLS = {
     "我知道你在想我~不许否认。",
     "再点一下？我会更乖一点点。",
     "你现在一定脸红了，对不对？",
+    "你这种人！我除了恋爱没什么和你好谈的。",
+    "你闻到空气中有烧焦的味道吗？那是我的心在为你燃烧。",
+    "你知道我最大的缺点是什么吗？我最大的缺点是缺点你。",
     "被我抓到了：你离不开我。"
   ],
   daily: [
@@ -712,7 +722,7 @@ function scheduleNextMidnightRefresh(){
 }
 
 /* =========================================================
-   ✅ 隐藏成就：23/01/2027 点击兔兔 + 已 >=520 天
+   ✅ 隐藏成就：23/01/2027 点击兔兔 距离第一天见面一年了
    ========================================================= */
 function isSameYMD(a, b){
   return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
@@ -723,7 +733,7 @@ const SECRET_ACHIEVEMENTS = [{
   requireDaysTogether: 520,
   slotId: "slotSecret",
   icon: "🕳️✨",
-  toast: "🕳️ 你在 23/01/2027 点了兔兔，而且我们已经 520 天了…（被你抓到了）",
+  toast: "🕳️ 你在 23/01/2027 点了兔兔，而且我们已经一年了…（被你抓到了）",
   letterHTML:
     "<h3>🕳️ 兔子洞·隐藏成就</h3>" +
     "<p>这一下点击，是专属暗号。</p>" +
