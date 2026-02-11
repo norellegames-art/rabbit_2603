@@ -292,7 +292,7 @@ footer{
     </div>
   </section>
 
-  <!-- Buttons trigger rabbit monologue (bubble), not below text -->
+  <!-- Buttons trigger rabbit monologue (bubble) -->
   <section class="card">
     <div class="controls">
       <button class="primary" type="button" data-monologue="random">🎲 随机惊喜</button>
@@ -302,7 +302,6 @@ footer{
       <button type="button" data-monologue="tease">😼 逗逗你</button>
       <button type="button" data-monologue="daily">☀️ 日常碎碎念</button>
     </div>
-    <div id="msg" style="display:none;"></div>
   </section>
 
   <!-- Spotify + Discord links -->
@@ -369,6 +368,10 @@ countEl.textContent = count;
 
 let lastClickTime = Date.now();
 let statusTimer = null;
+
+/* fix: prevent bubble disappearing on rapid presses */
+let bubbleTimer = null;
+let bounceTimer = null;
 
 const nowDate = new Date();
 const isBirthday = (nowDate.getMonth() === 2 && nowDate.getDate() === 26);
@@ -503,26 +506,39 @@ function setTemporaryStatus(text) {
   }, 5000);
 }
 
-/* ✅ Rabbit speaks (bubble) */
+/* ✅ Rabbit speaks (bubble) - robust against rapid presses */
 function speak(text, statusText = "🐰 兔兔在和你说悄悄话…") {
   lastClickTime = Date.now();
   updateCount();
 
+  if (bubbleTimer) { clearTimeout(bubbleTimer); bubbleTimer = null; }
+  if (bounceTimer) { clearTimeout(bounceTimer); bounceTimer = null; }
+
   petBubble.textContent = text;
   petBubble.classList.add("show");
 
+  rabbitEl.classList.remove("pet-react");
+  void rabbitEl.offsetWidth; // replay animation
   rabbitEl.classList.add("pet-react");
+
   triggerMood();
   setTemporaryStatus(statusText);
 
-  setTimeout(() => rabbitEl.classList.remove("pet-react"), 700);
-  setTimeout(() => petBubble.classList.remove("show"), 2400);
+  bounceTimer = setTimeout(() => rabbitEl.classList.remove("pet-react"), 700);
+  bubbleTimer = setTimeout(() => petBubble.classList.remove("show"), 2400);
 }
 
 /* unified click interaction (no part differences) */
 function interact() {
   const line = RABBIT_REACTIONS[Math.floor(Math.random() * RABBIT_REACTIONS.length)];
   speak(line, "💖 兔兔感受到你了…");
+}
+
+/* ========= tooltips ========= */
+function setAchvTooltip(el, text){
+  if (!el) return;
+  el.title = text;
+  el.setAttribute("aria-label", text);
 }
 
 /* ========= 3) ACHIEVEMENTS（点击计数成就） ========= */
@@ -536,17 +552,23 @@ function checkAchievements(autoOpen = false) {
         slot.classList.add("unlocked");
         if (autoOpen) openLetter(m);
       }
+
+      setAchvTooltip(slot, `✅ 已解锁：点击查看成就（${m}）`);
       slot.onclick = () => openLetter(m);
       slot.onkeydown = (e) => {
         if (e.key === "Enter" || e.key === " ") openLetter(m);
       };
+
     } else {
-      slot.onclick = () => speak(`还需要点击 ${m - count} 次解锁此成就！`, "✨ 兔兔在数数…");
+      setAchvTooltip(slot, `🔒 解锁于 ${m} 次点击`);
+      slot.onclick = () => speak(`解锁于 ${m} 次点击。现在是 ${count} 次。`, "✨ 兔兔在数数…");
       slot.onkeydown = (e) => {
-        if (e.key === "Enter" || e.key === " ") speak(`还需要点击 ${m - count} 次解锁此成就！`, "✨ 兔兔在数数…");
+        if (e.key === "Enter" || e.key === " ") speak(`解锁于 ${m} 次点击。现在是 ${count} 次。`, "✨ 兔兔在数数…");
       };
     }
   });
+
+  updateSecretTooltip();
 }
 
 function openLetter(m) {
@@ -574,8 +596,8 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* ✅ Buttons trigger rabbit monologue (bubble) */
-document.querySelectorAll("[data-monologue]").forEach(btn => {
-  btn.addEventListener("click", () => {
+document.querySelectorAll("button[data-monologue]").forEach(btn => {
+  btn.addEventListener("click", (e) => {
     const key = btn.dataset.monologue;
     const pool = MONOLOGUE_POOLS[key] || MONOLOGUE_POOLS.random;
     const line = pool[Math.floor(Math.random() * pool.length)];
@@ -591,6 +613,7 @@ document.querySelectorAll("button[data-monologue]").forEach(attachHeartTo);
    ✅ 在一起天数 + 里程碑系统（起始 23/01/2026）
    ========================================================= */
 const TOGETHER_START = new Date(2026, 0, 23); // 23/01/2026
+const START_STR = "23/01/2026";
 
 const MILESTONES = [
   { day: 1,   badge: "💞 在一起的第 1 天",   status: "🫶 第一天也要甜甜的！",     msg: "从今天起，我们有了专属的第 1 天。", icon: "🫶", slotId: "slot26" },
@@ -640,6 +663,7 @@ function updateDayBadge(){
   const day = daysTogether();
   const ms = getMilestone(day);
   dayBadge.textContent = ms?.badge || `💞 在一起的第 ${day} 天`;
+  dayBadge.title = `开始于 ${START_STR}`;
 }
 function updateStatusLineSmart(){
   if (statusTimer) return;
@@ -718,7 +742,7 @@ function unlockSecretAchievement(def){
     slot.classList.remove("locked");
     slot.classList.add("unlocked");
     slot.textContent = def.icon || "✨";
-    slot.title = "兔子洞·隐藏成就";
+    slot.title = "✅ 已解锁：点击查看隐藏成就";
     slot.onclick = () => {
       letterContent.innerHTML = def.letterHTML;
       overlay.style.display = "flex";
@@ -744,13 +768,26 @@ function restoreSecretAchievements(){
         slot.classList.remove("locked");
         slot.classList.add("unlocked");
         slot.textContent = def.icon || "✨";
-        slot.title = "兔子洞·隐藏成就";
+        slot.title = "✅ 已解锁：点击查看隐藏成就";
         slot.onclick = () => {
           letterContent.innerHTML = def.letterHTML;
           overlay.style.display = "flex";
         };
       }
     }
+  }
+}
+function updateSecretTooltip(){
+  const slot = $("slotSecret");
+  if (!slot) return;
+
+  let unlocked = false;
+  try { unlocked = (localStorage.getItem(secretKey("jan23_2027_520")) === "1"); } catch(e){}
+
+  if (unlocked) {
+    setAchvTooltip(slot, "✅ 已解锁：点击查看隐藏成就");
+  } else {
+    setAchvTooltip(slot, "🕳️ 隐藏成就：在 23/01/2027 点击兔兔，并且在一起 ≥ 520 天");
   }
 }
 function checkSecretAchievementsOnRabbitClick(){
@@ -780,6 +817,8 @@ rabbitEl.addEventListener("keydown", (e) => {
 
 /* ========= 启动 ========= */
 restoreSecretAchievements();
+updateSecretTooltip();
+
 updateEnvironment();
 checkAchievements(false);
 
