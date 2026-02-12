@@ -682,4 +682,318 @@ const MONOLOGUE_POOLS = {
     "老公～你完了，我离不开你了。"
   ],
   miss: [
-    "你不在的时候
+    "你不在的时候，我会把想你藏进每一次呼吸里。",
+    "想你到有点委屈，但想到你又会笑出来。",
+    "抱我一下，现在就要。",
+    "靠过来…我想贴着你。",
+    "别走，好不好。"
+  ],
+  sweet: [
+    "你是我的偏爱，还是最最偏的那一个。",
+    "我把我的心都交给你了，所以你要负责。",
+    "你一出现，我就只想对你软。",
+    "遇见你以后，我没想过别人。"
+  ],
+  sexy: [
+    "你这种眼神…我受不了。",
+    "你别靠这么近，我会不想乖。",
+    "你是不是想看我乱？",
+    "我现在一点都不想乖。",
+    "再靠近一点…就别怪我黏上你。"
+  ],
+  tease: [
+    "哼，你点这个按钮，是不是想听我撒娇？",
+    "我知道你在想我~不许否认。",
+    "被我抓到了：你离不开我。",
+    "再点一下？我会更乖一点点。"
+  ],
+  daily: [
+    "你今天吃饭了吗？要好好照顾自己。",
+    "记得喝水呀，我会盯紧你的。",
+    "今天有没有累到？累了就趴我怀里。",
+    "你平安就好，我一直在。"
+  ]
+};
+
+function speak(text, statusText = "🐰 兔兔在和你说悄悄话…"){
+  lastClickTime = Date.now();
+  updateCount();
+
+  if (bubbleTimer) { clearTimeout(bubbleTimer); bubbleTimer = null; }
+  if (bounceTimer) { clearTimeout(bounceTimer); bounceTimer = null; }
+
+  petBubble.textContent = text;
+  petBubble.classList.add("show");
+
+  rabbitEl.classList.remove("pet-react");
+  void rabbitEl.offsetWidth; // replay animation
+  rabbitEl.classList.add("pet-react");
+
+  triggerMood();
+  setTemporaryStatus(statusText);
+
+  bounceTimer = setTimeout(() => rabbitEl.classList.remove("pet-react"), 700);
+  bubbleTimer = setTimeout(() => petBubble.classList.remove("show"), 2400);
+}
+
+function interactRabbit(){
+  const line = RABBIT_REACTIONS[Math.floor(Math.random() * RABBIT_REACTIONS.length)];
+  speak(line, "💖 兔兔感受到你了…");
+}
+
+/* Buttons */
+document.querySelectorAll("button[data-monologue]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.monologue;
+    const pool = MONOLOGUE_POOLS[key] || MONOLOGUE_POOLS.husband;
+    const line = pool[Math.floor(Math.random() * pool.length)];
+    speak(line, "🐰 兔兔在碎碎念…");
+  });
+});
+
+/* =========================================================
+   7) Click achievements (99/520/999/2301/2409/2603)
+   ========================================================= */
+const CLICK_ACH = [99, 520, 999, 2301, 2409, 2603];
+
+function openLetter(m){
+  const letters = {
+    99: `
+      <h3>🌹 长长久久勋章</h3>
+      <p><b>“我们要一起走的路，进度条才刚开始呢。”</b></p>
+      <p>99 代表长久，也代表我对你的耐心和偏爱。</p>
+      <p>虽然我有时候有点小脾气，但我想陪你走过每一个 99。</p>
+      <p>不许中途掉队，听到了吗？</p>
+    `,
+    520: `
+      <h3>💎 直球告白奖励</h3>
+      <p><b>“滴！心动检测报告：”</b></p>
+      <p>恭喜解锁 520 奖励。</p>
+      <p>在这个全世界都在说爱你的日子，我决定简单粗暴一点：</p>
+      <p><b>我爱你，而且只爱你。</b></p>
+      <p>这个成就的有效期是——永久。</p>
+    `,
+    999: `
+      <h3>👑 至尊真爱大奖</h3>
+      <p><b>“恭喜获得：全服唯一限定爱人认证。”</b></p>
+      <p>999 是最高级的浪漫。</p>
+      <p>感谢你在这个并不完美的世界里，给了我最完美的守护。</p>
+      <p>你是我的超级英雄，也是我永远想赖着的港湾。</p>
+      <p><b>爱你久久！</b></p>
+    `,
+    2301: `
+      <h3>✨ 初遇纪念（First Meeting）</h3>
+      <p><b>成就达成：【命中注定的相遇】</b></p>
+      <p>此时此刻，世界线发生了变动。</p>
+      <p>感谢那天你出现在我的视野里，让我的生活从此开启了高甜模式。</p>
+      <p>遇见你，是我这辈子最欧气（好运）的时刻！</p>
+    `,
+    2409: `
+      <h3>🍰 你的生日（Your Birthday）</h3>
+      <p><b>成就达成：【全宇宙最可爱降临】</b></p>
+      <p>今天是你作为我男朋友陪我过的生日。</p>
+      <p>这份福气就送给你啦！</p>
+      <p>谢谢你一直宠着这个奇奇怪怪的我。</p>
+      <p>余生请继续努力，争取全成就满分通关！</p>
+    `,
+    2603: `
+      <h3>🎂 他的生日（His Birthday）</h3>
+      <p><b>成就达成：【人间理想·升级日】</b></p>
+      <p>恭喜你又升级啦！</p>
+      <p>虽然等级加了 1，但在我心里你永远是那个最帅的初始玩家。</p>
+      <p>生日快乐。</p>
+      <p>继续保持对我“单向奔赴”的特权哦，爱你！</p>
+    `
+  };
+
+  letterContent.innerHTML = letters[m] || "";
+  overlay.style.display = "flex";
+  overlay.setAttribute("aria-hidden","false");
+}
+
+function closeLetter(){
+  overlay.style.display = "none";
+  overlay.setAttribute("aria-hidden","true");
+}
+
+overlay.addEventListener("click", closeLetter);
+$("closeLetterBtn").addEventListener("click", (e) => { e.stopPropagation(); closeLetter(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && overlay.style.display === "flex") closeLetter();
+});
+
+function setSlotState(slot, unlocked){
+  if (!slot) return;
+  slot.classList.toggle("unlocked", !!unlocked);
+  slot.classList.toggle("locked", !unlocked);
+}
+
+function checkClickAchievements(autoOpen=false){
+  CLICK_ACH.forEach(m => {
+    const slot = $("slot"+m);
+    if (!slot) return;
+
+    if (count >= m){
+      setSlotState(slot, true);
+      bindTooltip(slot, () => `✅ 已解锁：点击查看（${m}）`);
+      slot.onclick = (e) => { e.stopPropagation(); openLetter(m); };
+      slot.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLetter(m); }
+      };
+      if (autoOpen) {
+        // 仅当“刚解锁”时弹窗：用一次性标记
+        const k = `click_ach_opened_${m}_v1`;
+        try{
+          if (localStorage.getItem(k) !== "1"){
+            localStorage.setItem(k,"1");
+            openLetter(m);
+          }
+        }catch(e){}
+      }
+    }else{
+      setSlotState(slot, false);
+      bindTooltip(slot, () => `🔒 解锁条件：${m} 次点击（当前 ${count}）`);
+      slot.onclick = (e) => { e.stopPropagation(); speak(`还需要 ${m - count} 次点击解锁。`, "✨ 兔兔在数数…"); };
+      slot.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); speak(`还需要 ${m - count} 次点击解锁。`, "✨ 兔兔在数数…"); }
+      };
+    }
+  });
+
+  updateSecretTooltip();
+}
+
+/* =========================================================
+   8) Together days (start 23/01/2026, day1)
+   ========================================================= */
+const TOGETHER_START = new Date(2026, 0, 23); // ✅ Jan=0, 23/01/2026
+const START_STR = "23/01/2026";
+
+function startOfDay(d){
+  const x = new Date(d);
+  x.setHours(0,0,0,0);
+  return x;
+}
+function daysTogether(){
+  const today = startOfDay(new Date());
+  const start = startOfDay(TOGETHER_START);
+  const diffMs = today - start;
+  if (diffMs < 0) return 0;
+  return Math.floor(diffMs / 86400000) + 1; // start day = Day 1
+}
+function updateDayBadge(){
+  const day = daysTogether();
+  dayBadge.textContent = `💞 在一起的第 ${day} 天`;
+}
+bindTooltip(dayBadge, () => `开始于 ${START_STR}`);
+
+/* 小小日常状态随机 */
+const DAILY_LINES = [
+  "✨ 兔兔在基地乖乖等你...",
+  "🥰 今天也要被我爱着。",
+  "💗 想你想得不讲道理。",
+  "🫧 过来，让我抱一下。",
+  "🌙 晚一点也没关系，我一直在。"
+];
+function updateStatusLineSmart(){
+  if (statusTimer) return;
+  if (Math.random() < 0.35) statusLine.textContent = DAILY_LINES[Math.floor(Math.random() * DAILY_LINES.length)];
+}
+
+/* =========================================================
+   9) Secret achievement (23/01/2027 click rabbit + days>=520)
+   ========================================================= */
+function isSameYMD(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+const SECRET_ACH = {
+  id: "jan23_2027_520",
+  date: new Date(2027, 0, 23),
+  requireDaysTogether: 520,
+  slotId: "slotSecret",
+  icon: "🕳️✨",
+  toast: "🕳️ 你在 23/01/2027 点了兔兔，而且我们已经一年了…（被你抓到了）",
+  letterHTML:
+    "<h3>🕳️ 兔子洞·隐藏成就</h3>" +
+    "<p>这一下点击，是专属暗号。</p>" +
+    "<p><b>23/01/2027</b>，而且我们已经走到 <b>520 天</b>。</p>" +
+    "<p>你一出现，兔兔就认得你。🐇💞</p>"
+};
+function secretKey(id){ return `secret_achv_${id}_unlocked_v1`; }
+
+function openSecretLetter(){
+  letterContent.innerHTML = SECRET_ACH.letterHTML;
+  overlay.style.display = "flex";
+  overlay.setAttribute("aria-hidden","false");
+}
+
+function updateSecretTooltip(){
+  const slot = $(SECRET_ACH.slotId);
+  if (!slot) return;
+
+  let unlocked = false;
+  try{ unlocked = (localStorage.getItem(secretKey(SECRET_ACH.id)) === "1"); }catch(e){}
+
+  if (unlocked){
+    setSlotState(slot, true);
+    slot.textContent = SECRET_ACH.icon;
+    bindTooltip(slot, () => "✅ 已解锁：点击查看隐藏成就");
+    slot.onclick = (e) => { e.stopPropagation(); openSecretLetter(); };
+    slot.onkeydown = (e) => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); openSecretLetter(); } };
+  }else{
+    setSlotState(slot, false);
+    slot.textContent = "🕳️";
+    bindTooltip(slot, () => "🕳️ 隐藏成就：23/01/2027 当天点兔兔 + 在一起 ≥ 520 天");
+    slot.onclick = (e) => { e.stopPropagation(); speak("🕳️ 还没到时候哦…（隐藏成就要满足条件）", "🕳️ 兔子洞还没打开…"); };
+    slot.onkeydown = (e) => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); speak("🕳️ 还没到时候哦…（隐藏成就要满足条件）", "🕳️ 兔子洞还没打开…"); } };
+  }
+}
+
+function unlockSecretAchievement(){
+  try{
+    if (localStorage.getItem(secretKey(SECRET_ACH.id)) === "1") return;
+    localStorage.setItem(secretKey(SECRET_ACH.id), "1");
+  }catch(e){}
+
+  speak(SECRET_ACH.toast, "🕳️ 兔子洞被打开了…");
+  triggerMood();
+  updateSecretTooltip();
+  openSecretLetter();
+}
+
+function checkSecretOnRabbitClick(){
+  const today = new Date();
+  const dt = daysTogether();
+  if (isSameYMD(today, SECRET_ACH.date) && dt >= SECRET_ACH.requireDaysTogether){
+    unlockSecretAchievement();
+  }
+}
+
+/* =========================================================
+   10) Rabbit click handlers (click + keyboard)
+   ========================================================= */
+rabbitEl.addEventListener("click", () => {
+  checkSecretOnRabbitClick();
+  interactRabbit();
+});
+rabbitEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    checkSecretOnRabbitClick();
+    interactRabbit();
+  }
+});
+
+/* =========================================================
+   11) Boot
+   ========================================================= */
+updateEnvironment();
+updateDayBadge();
+checkClickAchievements(false);
+updateSecretTooltip();
+updateStatusLineSmart();
+
+setInterval(updateDayBadge, 30000);
+</script>
+</body>
+</html>
