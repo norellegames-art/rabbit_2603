@@ -109,14 +109,14 @@ header{
   border:1.5px solid var(--gold);
   opacity:0;
   transition:.3s;
-  z-index:100;
+  z-index:9999 !importan;
 }
 #petBubble.show{ opacity:1; transform:translateX(-50%) translateY(20px); }
 
 /* ⚠️ 强制兔兔为最高点击层 */
 #rabbit{
   position:relative;
-  z-index:999;
+  z-index:1 !important;
   cursor:pointer;
 }
 #rabbit, #rabbit *{
@@ -126,6 +126,8 @@ header{
 .rabbit-img{
   width:260px;
   height:230px;
+  position: relative !important;
+  z-index: 1 !important;
   object-fit:contain;
   filter:drop-shadow(0 18px 30px rgba(0,0,0,.4));
 }
