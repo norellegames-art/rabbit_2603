@@ -4,161 +4,489 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>兔子的兔子洞 🐰</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐰</text></svg>">
+
 <style>
 :root{
   --purple:#7c3aed; --blue:#2563eb; --red:#dc2626;
   --bg1:#0a0f2a; --bg2:#120b24;
   --text:rgba(255,255,255,.96); --muted:rgba(220,220,255,.65);
-  --gold: #fbc02d;
-  --glass: rgba(255, 255, 255, 0.08);
+  --gold:#fbc02d;
+  --ring: 0 0 0 3px rgba(251,192,45,.35);
 }
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent; transition: all 0.2s ease;}
-html,body{height:100%; width:100%; margin:0; padding:0; overflow-x:hidden; background: var(--bg1);}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{height:100%; width:100%; margin:0; padding:0; overflow-x:hidden}
 
 body{
-  font-family: system-ui, -apple-system, sans-serif; color:var(--text);
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.2) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(220, 38, 38, 0.15) 0%, transparent 40%),
+  font-family:system-ui,-apple-system, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(900px 600px at 15% 15%, rgba(124,58,237,.3), transparent 60%),
+    radial-gradient(800px 600px at 50% 90%, rgba(37,99,235,.3), transparent 60%),
     linear-gradient(160deg, var(--bg1), var(--bg2));
+  transition: background 1.5s ease;
+}
+button:focus-visible, a:focus-visible { outline: none; box-shadow: var(--ring); }
+
+@media (hover: hover) {
+  body { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' style='font-size:18px'><text y='18'>❤️</text></svg>"), auto; }
+  button, a, .canvas, .achievement-slot, .badge { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' style='font-size:24px'><text y='24'>💖</text></svg>"), pointer; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
-/* BACKGROUND ANIMATION */
-.floating-hearts { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+/* MOOD */
+.mood-glow{
+  position: fixed; inset:0;
+  pointer-events:none; z-index: -1;
+  opacity:0; transition: 1s;
+}
+.happy-mood .mood-glow{
+  opacity: 1;
+  animation: moodPulse 2s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(124,58,237,0.4) 0%, transparent 70%);
+}
+@keyframes moodPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; filter: saturate(2); }
+}
+body.night-mode { background: linear-gradient(160deg, #050714, #0a1125) !important; }
 
-/* HEADER */
-.wrap{ max-width:500px; margin:0 auto; padding:20px 20px 80px; position: relative; z-index: 1;}
-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 25px; }
-h1{ font-size: 28px; margin:0; letter-spacing: -0.5px; }
-.sub{ font-size: 13px; color: var(--muted); margin-top: 4px; }
-.badge{ padding:6px 14px; border-radius:12px; font-size:12px; font-weight:600; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); color: var(--gold);}
+/* HEART PARTICLES */
+.heart-particle{
+  position: fixed; pointer-events:none;
+  font-size: 20px;
+  animation: floatUp 1.2s ease-out forwards;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+@keyframes floatUp {
+  0% { transform: translate(-50%, -50%) translateY(0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translateY(-120px) scale(1.8) rotate(20deg); opacity: 0; }
+}
 
-/* RABBIT BUBBLE & FIX */
-.pet-top{ position: relative; height: 380px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+/* LAYOUT */
+.wrap{ max-width:600px; margin:0 auto; padding:20px 16px 60px; }
+header{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom: 10px; }
+h1{margin:0; font-size:clamp(22px, 6vw, 32px); line-height:1.2; transition: 0.5s;}
+.sub{color:var(--muted); font-size:13px; margin-top:4px}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 16px;
+  min-height:32px;
+  line-height:1;
+  white-space:nowrap;
+  border-radius:999px;
+  font-size:11px;
+  font-weight: 600;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.2);
+}
+
+/* GLASS CARDS */
+.card{
+  margin-top:16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  padding: 18px;
+  position: relative;
+}
+
+/* 🐰 RABBIT */
+.pet-top{
+  position: relative;
+  min-height: 370px;
+  display: flex; flex-direction: column;
+  justify-content: flex-end; align-items: center;
+}
 #petBubble{
-  position: absolute; top: 10px; left: 50%; transform: translateX(-50%) translateY(10px);
-  width: max-content; max-width: 85vw; min-width: 140px;
-  padding: 16px 24px; border-radius: 22px; 
-  background: rgba(15, 15, 35, 0.9); border: 1.5px solid var(--gold);
-  backdrop-filter: blur(10px); color: #fff; text-align: center;
-  opacity: 0; pointer-events: none; z-index: 100; font-weight: 500;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  max-width: 85%;
+  padding: 14px 22px;
+  border-radius: 20px;
+  background: rgba(10, 10, 25, 0.95);
+  border: 1.5px solid var(--gold);
+  color: #fff;
+  font-size: 15px;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: .35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
 }
-#petBubble.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+#petBubble.show{ opacity: 1; transform: translateX(-50%) translateY(20px); }
 
-#rabbit{ cursor: pointer; position: relative; }
-.rabbit-img{ width: 240px; height: 240px; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.4)); }
-.pet-react .rabbit-img{ animation: bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes bounce{ 0%, 100% {transform: scale(1);} 50% {transform: scale(1.08) translateY(-15px);} }
-
-.love-meter{ margin-top: 20px; background: var(--glass); padding: 8px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display:flex; align-items:center; gap:8px; }
-#loveCount{ font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
-
-/* CONTROLS */
-.controls{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-button{ 
-  border: 1px solid rgba(255,255,255,0.15); background: var(--glass); 
-  color: #fff; padding: 18px 10px; border-radius: 20px; font-size: 14px; font-weight: 500;
-  cursor: pointer; backdrop-filter: blur(5px);
+.canvas{
+  position: relative;
+  width: 260px;
+  height: 230px;
+  transition: 0.3s;
+  touch-action: manipulation;
+  user-select: none;
+  outline: none;
 }
-button:active { transform: scale(0.94); background: rgba(255,255,255,0.2); }
-button.primary{ background: linear-gradient(135deg, var(--purple), var(--red)); border: none; box-shadow: 0 8px 20px rgba(124,58,237,0.3); }
+
+/* image rabbit */
+.rabbit-wrap{ position: relative; width: 260px; height: 230px; }
+.rabbit-img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display:block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter:
+    drop-shadow(0 18px 28px rgba(0,0,0,.33))
+    drop-shadow(0 6px 10px rgba(0,0,0,.22));
+}
+
+/* bounce only rabbit image */
+@keyframes bounce{0%,100%{transform:scale(1)} 50%{transform:scale(1.05) translateY(-10px)}}
+#rabbit.pet-react .rabbit-img{ animation: bounce 0.4s ease; }
+
+/* BUTTONS */
+.counter-container{
+  margin-top: 15px;
+  display: flex; align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px 20px;
+  border-radius: 999px;
+}
+.controls{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+button, .link-btn{
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  padding: 15px;
+  border-radius: 18px;
+  font-size: 14px;
+  text-decoration: none;
+  text-align: center;
+  transition: 0.25s;
+  backdrop-filter: blur(5px);
+}
+button:hover, .link-btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.35); }
+button:active, .link-btn:active{ transform: translateY(0px) scale(0.99); }
+
+button.primary{
+  background: linear-gradient(135deg, var(--purple), var(--red));
+  border: none;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+}
 
 /* ACHIEVEMENTS */
-.ach-title{ text-align: center; font-size: 11px; margin: 30px 0 15px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
-.achievements-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px 15px; justify-items: center; }
-.achievement-slot{ 
-  width: 70px; height: 70px; border-radius: 24px; 
-  background: rgba(0,0,0,0.4); border: 2px dashed rgba(255,255,255,0.1); 
-  display: flex; align-items: center; justify-content: center; font-size: 28px; 
-  position: relative; cursor: pointer; 
+.achievements-grid{
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.achievement-slot.unlocked{ border: 2px solid var(--gold); background: rgba(251,192,45,0.1); box-shadow: 0 0 20px rgba(251,192,45,0.15); border-style: solid;}
-.achievement-slot.locked{ filter: grayscale(1); opacity: 0.3; }
-.ach-label{ position: absolute; bottom: -20px; font-size: 10px; font-weight: 700; color: var(--muted); }
+.achievement-slot{
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  border: 2px dashed rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center; justify-content: center;
+  font-size: 28px;
+  transition: 0.35s;
+}
+.achievement-slot.unlocked{
+  background: rgba(124,58,237,0.2);
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 20px rgba(251,192,45,0.3);
+  animation: pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.achievement-slot.locked{ filter: grayscale(1) opacity(0.22); }
+@keyframes pop{ from{transform:scale(0.5)} to{transform:scale(1)} }
 
 /* MODAL */
-#overlay{ display: none; position: fixed; inset:0; background: rgba(0,0,0,0.9); z-index: 1000; padding: 25px; align-items: center; justify-content: center; backdrop-filter: blur(12px); }
-#letterBox{ 
-  background: #fffcf5; color: #3e2723; padding: 40px 30px; border-radius: 32px; 
-  max-width: 400px; width: 100%; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,1);
-  transform: scale(0.9); animation: modalIn 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+#overlay{
+  display: none;
+  position: fixed; inset:0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  padding: 20px;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
 }
-@keyframes modalIn { to {transform: scale(1);} }
-.letter-close{ position: absolute; top: 20px; right: 20px; font-size: 24px; color: #d7ccc8; cursor: pointer; }
-.wax-seal{ text-align: center; margin-top: 25px; font-size: 30px; opacity: 0.8; }
+#letterBox{
+  background: linear-gradient(135deg, #fffcf5, #fff);
+  color: #4e342e;
+  padding: 35px;
+  border-radius: 30px;
+  max-width: 450px;
+  width: 100%;
+  position: relative;
+  line-height: 1.6;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+.letter-close{
+  position: absolute;
+  top: 15px; right: 20px;
+  cursor: pointer;
+  font-size: 28px;
+  color: #bbb;
+}
+.letter-close:hover{ color:#888; }
 
-.heart-particle{ position: fixed; pointer-events:none; z-index: 9999; animation: floatUp 1s ease-out forwards; }
-@keyframes floatUp { 0% {transform: translate(-50%,-50%) scale(1); opacity:1;} 100% {transform: translate(-50%,-150%) scale(1.5); opacity:0;} }
+footer{
+  margin-top: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* ===== Custom Tooltip (Hover / Tap) ===== */
+.tooltip {
+  position: fixed;
+  z-index: 3000;
+  max-width: 260px;
+  padding: 8px 12px;
+  background: rgba(20,20,40,0.95);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 10px;
+  line-height: 1.45;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 6px);
+  transition: opacity .15s ease, transform .15s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+  left: 50%;
+  top: 20px;
+}
+.tooltip.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 360px){
+  .controls{ grid-template-columns: 1fr; }
+  .badge{ display:none; }
+}
 </style>
 </head>
-<body>
 
-<div class="floating-hearts" id="bgLayer"></div>
+<body>
+<div class="mood-glow" aria-hidden="true"></div>
 
 <div class="wrap">
   <header>
     <div>
-      <h1 id="greetingTitle">你好呀 💘</h1>
-      <div class="sub" id="statusLine">兔兔在缝隙里偷看你...</div>
+      <h1 id="greetingTitle">💘 你好呀</h1>
+      <div class="sub">这是属于我们的秘密基地</div>
+      <div id="statusLine" style="font-size: 12px; color: var(--gold); margin-top: 6px; font-weight: 500;">🐰 兔兔正在等你...</div>
     </div>
-    <div class="badge" id="dayBadge">💞 第 1 天</div>
+    <span class="badge" id="dayBadge">💞 在一起的第 0 天</span>
   </header>
 
-  <div class="pet-top">
-    <div id="petBubble"></div>
-    <div id="rabbit">
-      <img src="rabbit1.png" alt="🐰" class="rabbit-img">
+  <section class="card pet-card" id="petCard" aria-label="兔兔互动区">
+    <div class="pet-top">
+      <div id="petBubble" role="status" aria-live="polite"></div>
+
+      <div class="canvas" id="rabbit" role="button" tabindex="0" aria-label="摸摸兔兔">
+        <div class="rabbit-wrap">
+          <img src="rabbit1.png" alt="兔兔" class="rabbit-img" draggable="false" />
+        </div>
+      </div>
+
+      <div class="counter-container" aria-label="心动计数器">
+        <span style="font-size: 20px" aria-hidden="true">❤️</span>
+        <span id="loveCount" style="font-weight: 800; font-size: 20px">0</span>
+      </div>
     </div>
-    <div class="love-meter">
-      <span>❤️</span>
-      <span id="loveCount">0</span>
+  </section>
+
+  <!-- Buttons trigger rabbit monologue -->
+  <section class="card">
+    <div class="controls">
+      <button class="primary" type="button" data-monologue="husband">❤️老公</button>
+      <button type="button" data-monologue="miss">🥺想你了</button>
+      <button type="button" data-monologue="sweet">🍬说点甜的</button>
+      <button type="button" data-monologue="sexy">🔥骚母狗</button>
+      <button type="button" data-monologue="tease">😼逗逗你</button>
+      <button type="button" data-monologue="daily">☀️日常碎碎念</button>
+    </div>
+  </section>
+
+  <!-- Spotify + Discord links -->
+  <section class="card">
+    <div class="controls">
+      <a
+        href="https://open.spotify.com/playlist/3vpKJcf9HY9Lh8MGcN4TYQ?si=e5yIwWfLRHCEHs-lX3lVIw&pt=96e72815d5dcac7944906e89292e4846"
+        target="_blank" rel="noopener noreferrer"
+        class="link-btn" style="color:#1ed760"
+      >🎵 Spotify</a>
+
+      <a
+        href="https://discord.com/channels/1466603847744229449/1466603848612184086"
+        target="_blank" rel="noopener noreferrer"
+        class="link-btn" style="color:#5865f2"
+      >💬 Discord</a>
+    </div>
+  </section>
+
+  <!-- Achievements -->
+  <section class="card">
+    <div style="font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase;">
+      成就收集馆
+    </div>
+    <div class="achievements-grid">
+      <div class="achievement-slot locked" id="slot26" role="button" tabindex="0" aria-label="成就 26">🎂</div>
+      <div class="achievement-slot locked" id="slot99" role="button" tabindex="0" aria-label="成就 99">🌹</div>
+      <div class="achievement-slot locked" id="slot520" role="button" tabindex="0" aria-label="成就 520">💎</div>
+      <div class="achievement-slot locked" id="slotSecret" role="button" tabindex="0" aria-label="隐藏成就">🕳️</div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div id="overlay" aria-hidden="true">
+    <div id="letterBox" role="dialog" aria-modal="true" aria-label="密函" onclick="event.stopPropagation()">
+      <div class="letter-close" id="closeLetterBtn" aria-label="关闭">×</div>
+      <div id="letterContent"></div>
     </div>
   </div>
 
-  <div class="controls">
-    <button class="primary" onclick="handleAction('husband')">❤️ 老公</button>
-    <button onclick="handleAction('miss')">🥺 想你了</button>
-    <button onclick="handleAction('sweet')">🍬 说点甜的</button>
-    <button onclick="handleAction('sexy')">🔥 骚母狗</button>
-    <button onclick="handleAction('tease')">😼 逗逗你</button>
-    <button onclick="handleAction('daily')">☀️ 日常碎碎念</button>
-  </div>
-
-  <div class="ach-title">成就收集馆</div>
-  <div class="achievements-grid">
-    <div class="achievement-slot locked" id="slot99">🌹<span class="ach-label">99</span></div>
-    <div class="achievement-slot locked" id="slot520">💎<span class="ach-label">520</span></div>
-    <div class="achievement-slot locked" id="slot999">👑<span class="ach-label">999</span></div>
-    <div class="achievement-slot locked" id="slot2301">✨<span class="ach-label">2301</span></div>
-    <div class="achievement-slot locked" id="slot2409">🍰<span class="ach-label">2409</span></div>
-    <div class="achievement-slot locked" id="slot2603">🎂<span class="ach-label">2603</span></div>
-  </div>
+  <footer>距离不会削弱爱，只会证明它 💌</footer>
 </div>
 
-<div id="overlay" onclick="closeLetter()">
-  <div id="letterBox" onclick="event.stopPropagation()">
-    <div class="letter-close" onclick="closeLetter()">×</div>
-    <div id="letterContent" style="white-space: pre-wrap; font-size: 16px; line-height: 1.8;"></div>
-    <div class="wax-seal">💌</div>
-  </div>
-</div>
+<!-- tooltip -->
+<div id="tooltip" class="tooltip" aria-hidden="true"></div>
 
 <script>
+/* ========= helpers ========= */
+const $ = (id) => document.getElementById(id);
+const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
+const petBubble = $("petBubble");
+const countEl = $("loveCount");
+const statusLine = $("statusLine");
+const title = $("greetingTitle");
+const overlay = $("overlay");
+const letterContent = $("letterContent");
+const dayBadge = $("dayBadge");
+const rabbitEl = $("rabbit");
+const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ========= Tooltip (hover + tap safe) ========= */
+const tooltip = $("tooltip");
+let tooltipTimer = null;
+
+function showTooltipAt(x, y, text){
+  if (!text) return;
+  tooltip.textContent = text;
+  tooltip.style.left = x + "px";
+  tooltip.style.top = y + "px";
+  tooltip.classList.add("show");
+  tooltip.setAttribute("aria-hidden", "false");
+
+  if (tooltipTimer) clearTimeout(tooltipTimer);
+  tooltipTimer = setTimeout(hideTooltip, 2500);
+}
+function showTooltipForEl(el, text, evt){
+  const rect = el.getBoundingClientRect();
+  const x = (evt && (evt.clientX || evt.touches?.[0]?.clientX)) ?? (rect.left + rect.width / 2);
+  const y = rect.top - 12;
+  showTooltipAt(x, Math.max(14, y), text);
+}
+function hideTooltip(){
+  tooltip.classList.remove("show");
+  tooltip.setAttribute("aria-hidden", "true");
+}
+window.addEventListener("scroll", hideTooltip, { passive:true });
+window.addEventListener("resize", hideTooltip, { passive:true });
+
+function bindTooltip(el, getText){
+  if (!el) return;
+
+  el.addEventListener("mouseenter", (e) => showTooltipForEl(el, getText(), e));
+  el.addEventListener("mouseleave", hideTooltip);
+
+  // tap/click (mobile + desktop)
+  el.addEventListener("pointerdown", (e) => {
+    // don't block other handlers; just show tooltip
+    showTooltipForEl(el, getText(), e);
+  });
+}
+
+/* ========= 1) CONFIG & DATA ========= */
+let count = 0;
+try {
+  const saved = Number(localStorage.getItem("rabbit_love_count"));
+  count = Number.isFinite(saved) ? clamp(Math.floor(saved), 0, 9999999) : 0;
+} catch(e) {}
+countEl.textContent = count;
+
+let lastClickTime = Date.now();
+let statusTimer = null;
+
+/* bubble robustness */
+let bubbleTimer = null;
+let bounceTimer = null;
+
+const nowDate = new Date();
+const isBirthday = (nowDate.getMonth() === 2 && nowDate.getDate() === 26); // March 26
+
+/* ===== Unified rabbit reactions (SAFE STRINGS ONLY) ===== */
+const RABBIT_REACTIONS = [
+  "刚刚想到你一下。",
+  "不知道为什么会想到你。",
+  "你现在在干嘛？",
+  "我好像有点在意你。",
+  "今天的你应该挺忙。",
+  "我刚刚走神了。",
+  "脑子里突然是你。",
+  "你出现的时候我会注意。",
+  "有点想找你。",
+  "又想到你了。",
+  "我好像记得你的小习惯。",
+  "你不说话我也会注意。",
+  "我刚刚停了一下。",
+  "我对你有点例外。",
+  "你有点影响我。",
+  "我没打算想这么多，但你出现了。",
+  "你在就好。",
+  "就是想到你。",
+  "你靠近的时候我会乱。",
+  "这种距离有点危险。",
+  "你这样我会心跳。",
+  "你是不是故意的？",
+  "你别再靠过来…我会失守。",
+  "今天也靠近我一点吧。"
+];
+
+/* ===== Button monologues (rabbit's inner voice) ===== */
 const MONOLOGUE_POOLS = {
   husband: [
-    "老公～你现在是不是在想我呀",
-    "老公～我刚刚只是想叫你一声",
-    "老公～我不回我我会乱想的",
-    "老公～我可以黏你一下吗",
-    "老公～我现在整个人都是你的",
-    "老公～你完了，我离不开你了"
+    "老公～我刚刚只是想叫你一声。",
+    "老公～你不回我我会乱想的。",
+    "老公～我可以黏你一下吗？",
+    "老公～你是不是最疼我。",
+    "老公～我现在有点离不开你。",
+    "老公～你完了，我离不开你了。"
   ],
   miss: [
     "你不在的时候，我会把想你藏进每一次呼吸里。",
     "想你到有点委屈，但想到你又会笑出来。",
-    "我想靠着你，一直到天亮。",
-    "抱我一下，现在就要。"
+    "抱我一下，现在就要。",
+    "靠过来…我想贴着你。",
+    "别走，好不好。"
   ],
   sweet: [
     "你是我的偏爱，还是最最偏的那一个。",
@@ -167,11 +495,11 @@ const MONOLOGUE_POOLS = {
     "遇见你以后，我没想过别人。"
   ],
   sexy: [
-    "过来，我给你一个很紧很久的抱抱。",
-    "今天也靠近我一点吧。",
+    "你这种眼神…我受不了。",
+    "你别靠这么近，我会不想乖。",
     "你是不是想看我乱？",
     "我现在一点都不想乖。",
-    "你这种眼神，我受不了..."
+    "再靠近一点…就别怪我黏上你。"
   ],
   tease: [
     "哼，你点这个按钮，是不是想听我撒娇？",
@@ -182,109 +510,403 @@ const MONOLOGUE_POOLS = {
   daily: [
     "你今天吃饭了吗？要好好照顾自己。",
     "记得喝水呀，我会盯紧你的。",
-    "今天有没有累到？累了就趴我怀里。"
+    "今天有没有累到？累了就趴我怀里。",
+    "你平安就好，我一直在。"
   ]
 };
 
-const ACH_DATA = {
-  99: { title: "🌹 长长久久勋章", text: "“我们要一起走的路，进度条才刚开始呢。”\n\n99 代表长久，也代表我对你的耐心和偏爱。虽然我有时候有点小脾气，但我想陪你走过每一个 99。不许中途掉队，听到了吗？" },
-  520: { title: "💎 直球告白奖励", text: "“滴！心动检测报告：”\n\n恭喜解锁 520 奖励！在这个全世界都在说爱你的日子，我决定简单粗暴一点：我爱你，而且只爱你。这个成就的有效期是——永久。" },
-  999: { title: "👑 至尊真爱大奖", text: "“恭喜获得：全服唯一限定爱人认证。”\n\n999 是最高级的浪漫。感谢你在这个并不完美的世界里，给了我最完美的守护。你是我的超级英雄，也是我永远想赖着的港湾。爱你久久！" },
-  2301: { title: "✨ 2301：初遇纪念", text: "成就达成：【命中注定的相遇】\n\n此时此刻，世界线发生了变动。感谢那天你出现在我的视野里，让我的生活从此开启了高甜模式。遇见你，是我这辈子最欧气（好运）的时刻！" },
-  2409: { title: "🍰 2409：你的生日", text: "成就达成：【全宇宙最可爱降临】\n\n今天是你作为“我男朋友”陪我过的生日，这份福气就送给你啦！谢谢你一直宠着这个奇奇怪怪的我。余生请继续努力，争取全成就满分通关！" },
-  2603: { title: "🎂 2603：他的生日", text: "成就达成：【人间理想·升级日】\n\n恭喜你又升级啦！虽然等级加了 1，但在我心里你永远是那个最帅的初始玩家。生日快乐，继续保持对我“单向奔赴”的特权哦，爱你！" }
-};
+/* ========= 2) CORE LOGIC ========= */
+function updateEnvironment() {
+  const now = Date.now();
+  const idleSeconds = (now - lastClickTime) / 1000;
+  const hr = new Date().getHours();
 
-let count = parseInt(localStorage.getItem("love_count") || "0");
-document.getElementById("loveCount").innerText = count;
+  if (count > 520) title.textContent = "👑 永远的主人";
+  else if (count > 100) title.textContent = "💍 我的唯一";
+  else if (isBirthday) title.textContent = "🎂 生日快乐，主人！";
+  else title.textContent = hr < 12 ? "🌅 早安，我的宝贝" : hr < 18 ? "🌤️ 下午好呀" : "🌙 晚安，梦里见";
 
-function speak(txt) {
-  const b = document.getElementById("petBubble");
-  const r = document.getElementById("rabbit");
-  b.innerText = txt;
-  b.classList.add("show");
-  r.classList.add("pet-react");
-  setTimeout(() => { b.classList.remove("show"); r.classList.remove("pet-react"); }, 2800);
+  if (statusTimer) return;
+
+  if (isBirthday) {
+    statusLine.textContent = "🥳 兔兔正在为你庆祝生日！";
+  } else if (idleSeconds >= 900) {
+    statusLine.textContent = "💤 好累啊，兔兔先眯一会...点点我唤醒";
+    document.body.classList.remove("night-mode");
+  } else if (idleSeconds >= 300) {
+    statusLine.textContent = "🥺 主人又不理我了...";
+    document.body.classList.remove("night-mode");
+  } else if (hr >= 22 || hr < 6) {
+    document.body.classList.add("night-mode");
+    statusLine.textContent = "🌙 晚安，梦里见...";
+  } else {
+    document.body.classList.remove("night-mode");
+    statusLine.textContent = "✨ 兔兔在基地乖乖等你...";
+  }
+}
+setInterval(updateEnvironment, 10000);
+
+function spawnHeart(x, y) {
+  if (prefersReduced) return;
+  const heart = document.createElement("div");
+  heart.className = "heart-particle";
+  heart.textContent = ["❤️", "💖", "✨", "🌸"][Math.floor(Math.random() * 4)];
+  heart.style.left = x + "px";
+  heart.style.top = y + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 1200);
 }
 
-function handleAction(key) {
-  const pool = MONOLOGUE_POOLS[key];
-  speak(pool[Math.floor(Math.random() * pool.length)]);
-  incrementCount();
+function attachHeartTo(el) {
+  el.addEventListener("pointerdown", (e) => {
+    const x = e.clientX ?? window.innerWidth / 2;
+    const y = e.clientY ?? window.innerHeight / 2;
+    spawnHeart(x, y);
+  }, { passive: true });
 }
 
-function incrementCount() {
-  count++;
-  document.getElementById("loveCount").innerText = count;
-  localStorage.setItem("love_count", count);
+function persistCount() {
+  try { localStorage.setItem("rabbit_love_count", String(count)); } catch(e) {}
+}
+function updateCount() {
+  count = clamp(count + 1, 0, 9999999);
+  countEl.textContent = count;
+  persistCount();
   checkAchievements(true);
 }
 
-function checkAchievements(isNew) {
-  Object.keys(ACH_DATA).forEach(key => {
-    const num = parseInt(key);
-    const slot = document.getElementById("slot" + num);
-    if (count >= num) {
+function triggerMood() {
+  document.body.classList.add("happy-mood");
+  setTimeout(() => document.body.classList.remove("happy-mood"), 5000);
+}
+
+function setTemporaryStatus(text) {
+  statusLine.textContent = text;
+  if (statusTimer) clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => {
+    statusTimer = null;
+    updateEnvironment();
+    updateStatusLineSmart();
+  }, 5000);
+}
+
+/* ✅ Rabbit speaks (bubble) - robust against rapid presses */
+function speak(text, statusText = "🐰 兔兔在和你说悄悄话…") {
+  lastClickTime = Date.now();
+  updateCount();
+
+  if (bubbleTimer) { clearTimeout(bubbleTimer); bubbleTimer = null; }
+  if (bounceTimer) { clearTimeout(bounceTimer); bounceTimer = null; }
+
+  petBubble.textContent = text;
+  petBubble.classList.add("show");
+
+  rabbitEl.classList.remove("pet-react");
+  void rabbitEl.offsetWidth; // replay animation
+  rabbitEl.classList.add("pet-react");
+
+  triggerMood();
+  setTemporaryStatus(statusText);
+
+  bounceTimer = setTimeout(() => rabbitEl.classList.remove("pet-react"), 700);
+  bubbleTimer = setTimeout(() => petBubble.classList.remove("show"), 2400);
+}
+
+/* unified click interaction */
+function interact() {
+  const line = RABBIT_REACTIONS[Math.floor(Math.random() * RABBIT_REACTIONS.length)];
+  speak(line, "💖 兔兔感受到你了…");
+}
+
+/* ========= 3) ACHIEVEMENTS（点击计数成就） ========= */
+function openLetter(m) {
+  const letters = {
+    26: "<h3>🎂 0326 生日密函</h3><p>亲爱的主人：</p><p>今天是 0326，是你来到这个世界最特别的日子。</p><p>这只小兔子代表我，会一直陪在你身边。愿你新的一岁眼里有星辰，身边有暖阳。✨</p>",
+    99: "<h3>🌹 长长久久</h3><p>99 次点击，代表我对你的爱长长久久。</p><p>不管未来有多少个 99 天，我都想牵着你的手一直走下去。❤️</p>",
+    520:"<h3>💎 极致告白</h3><p>520 次点击是你耐心的证明，也是我真心的承诺。</p><p>你是我唯一的宝藏。此生无憾，我爱你。💍</p>"
+  };
+
+  letterContent.innerHTML = letters[m] || "";
+  overlay.style.display = "flex";
+  overlay.setAttribute("aria-hidden", "false");
+}
+function closeLetter() {
+  overlay.style.display = "none";
+  overlay.setAttribute("aria-hidden", "true");
+}
+
+function setAchvBehavior(slot, tooltipText, onActivate){
+  bindTooltip(slot, () => tooltipText);
+  slot.onclick = (e) => { e.stopPropagation(); onActivate?.(); };
+  slot.onkeydown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onActivate?.();
+    }
+  };
+}
+
+function checkAchievements(autoOpen = false) {
+  [26, 99, 520].forEach((m) => {
+    const slot = $("slot" + m);
+    if (!slot) return;
+
+    if (count >= m) {
       if (slot.classList.contains("locked")) {
         slot.classList.remove("locked");
         slot.classList.add("unlocked");
-        if(isNew) showLetter(num);
+        if (autoOpen) openLetter(m);
       }
-      slot.onclick = () => showLetter(num);
+      setAchvBehavior(
+        slot,
+        `✅ 已解锁：点击查看（${m} 次点击成就）`,
+        () => openLetter(m)
+      );
     } else {
-      slot.onclick = () => speak(`还差 ${num - count} 次心动解锁勋章...`);
+      setAchvBehavior(
+        slot,
+        `🔒 解锁于 ${m} 次点击（当前 ${count}）`,
+        () => speak(`还差 ${m - count} 次点击解锁。现在是 ${count} 次。`, "✨ 兔兔在数数…")
+      );
     }
   });
+
+  updateSecretTooltip();
 }
 
-function showLetter(num) {
-  const data = ACH_DATA[num];
-  document.getElementById("letterContent").innerHTML = `
-    <div style="font-weight:800; color:var(--purple); font-size:20px; margin-bottom:15px;">${data.title}</div>
-    <div style="color:#5d4037;">${data.text}</div>
-  `;
-  document.getElementById("overlay").style.display = "flex";
+/* ========= 4) LISTENERS ========= */
+overlay.addEventListener("click", closeLetter);
+$("closeLetterBtn").addEventListener("click", (e) => { e.stopPropagation(); closeLetter(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && overlay.style.display === "flex") closeLetter();
+});
+
+/* Buttons trigger rabbit monologue */
+document.querySelectorAll("button[data-monologue]").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    const key = btn.dataset.monologue;
+    const pool = MONOLOGUE_POOLS[key] || MONOLOGUE_POOLS.husband;
+    const line = pool[Math.floor(Math.random() * pool.length)];
+    speak(line, "🐰 兔兔在碎碎念…");
+  });
+});
+
+/* Hearts only on rabbit & monologue buttons */
+attachHeartTo(rabbitEl);
+document.querySelectorAll("button[data-monologue]").forEach(attachHeartTo);
+
+/* =========================================================
+   ✅ 在一起天数 + 里程碑系统（起始 26/01/2026，当天=第1天）
+   ========================================================= */
+const TOGETHER_START = new Date(2026, 0, 26); // 26/01/2026
+const START_STR = "26/01/2026";
+
+function startOfDay(d){
+  const x = new Date(d);
+  x.setHours(0,0,0,0);
+  return x;
+}
+function daysTogether(){
+  const today = startOfDay(new Date());
+  const start = startOfDay(TOGETHER_START);
+  const diff = today - start;
+  if (diff < 0) return 0;
+  return Math.floor(diff / 86400000) + 1; // start date = day 1
+}
+function updateDayBadge(){
+  const day = daysTogether();
+  dayBadge.textContent = `💞 在一起的第 ${day} 天`;
 }
 
-function closeLetter() { document.getElementById("overlay").style.display = "none"; }
+bindTooltip(dayBadge, () => `开始于 ${START_STR}`);
 
-// Background particles
-function createHeart() {
-  const h = document.createElement("div");
-  h.innerText = Math.random() > 0.5 ? "❤️" : "✨";
-  h.style.position = "fixed";
-  h.style.left = Math.random() * 100 + "vw";
-  h.style.top = "110vh";
-  h.style.fontSize = Math.random() * 15 + 10 + "px";
-  h.style.opacity = Math.random() * 0.5;
-  h.style.transition = `transform ${Math.random() * 5 + 5}s linear, opacity 3s`;
-  document.getElementById("bgLayer").appendChild(h);
+const MILESTONES = [
+  { day: 1,   badge: "💞 在一起的第 1 天",   status: "🫶 第一天也要甜甜的！",     msg: "从今天起，我们有了专属的第 1 天。", icon: "🫶" },
+  { day: 7,   badge: "🌙 我们的第 7 天",     status: "✨ 一周纪念达成！",        msg: "一周啦，我们继续黏黏～",             icon: "✨" },
+  { day: 30,  badge: "🌹 我们的第 30 天",    status: "🌹 一个月纪念！",          msg: "一个月的爱意，越来越稳了。",         icon: "🌹" },
+  { day: 99,  badge: "🌹 长长久久 99 天",    status: "🌹 99 天啦，继续长长久久", msg: "99 天：爱不减，反而更深。",          icon: "🌹", openLetter: 99 },
+  { day: 100, badge: "💍 我们的第 100 天",   status: "💍 100 天：你是我的唯一",  msg: "100 天：我把偏爱都给你。",           icon: "💍" },
+  { day: 365, badge: "👑 一周年纪念",        status: "👑 一周年：我们赢了",       msg: "一周年：谢谢你一直在。",             icon: "👑" },
+  { day: 520, badge: "💎 520 天极致告白",    status: "💎 520 天：我爱你",         msg: "520 天：我愿意一直一直。",           icon: "💎", openLetter: 520 }
+];
+
+const DAILY_LINES = [
+  "✨ 兔兔在基地乖乖等你...",
+  "🥰 今天也要被我爱着。",
+  "💗 想你想得不讲道理。",
+  "🫧 过来，让我抱一下。",
+  "🌙 晚一点也没关系，我一直在。"
+];
+
+function getMilestone(day){
+  return MILESTONES.find(m => m.day === day) || null;
+}
+function getUnlockedKey(){ return "together_milestones_unlocked_v1"; }
+function loadUnlocked(){
+  try{
+    return JSON.parse(localStorage.getItem(getUnlockedKey()) || "{}");
+  }catch(e){ return {}; }
+}
+function saveUnlocked(obj){
+  try{ localStorage.setItem(getUnlockedKey(), JSON.stringify(obj)); }catch(e){}
+}
+
+function updateStatusLineSmart(){
+  if (statusTimer) return;
+  const day = daysTogether();
+  const ms = getMilestone(day);
+  if (ms?.status) { statusLine.textContent = ms.status; return; }
+  if (Math.random() < 0.35) {
+    statusLine.textContent = DAILY_LINES[Math.floor(Math.random() * DAILY_LINES.length)];
+  }
+}
+
+function unlockMilestoneIfNeeded(){
+  const day = daysTogether();
+  const ms = getMilestone(day);
+  if (!ms) return;
+
+  const unlocked = loadUnlocked();
+  if (unlocked[String(day)]) return;
+
+  unlocked[String(day)] = true;
+  saveUnlocked(unlocked);
+
+  // show badge text if milestone has custom badge
+  if (ms.badge) dayBadge.textContent = ms.badge;
+
+  speak(ms.msg || `🎉 达成第 ${day} 天！`, ms.status || "🎉 纪念日达成！");
+  if (ms.openLetter) openLetter(ms.openLetter);
+  triggerMood();
+}
+
+function scheduleNextMidnightRefresh(){
+  const now = new Date();
+  const next = new Date(now);
+  next.setHours(24,0,0,50);
+  const delay = next - now;
+
   setTimeout(() => {
-    h.style.transform = `translateY(-120vh) rotate(${Math.random() * 360}deg)`;
-  }, 100);
-  setTimeout(() => h.remove(), 8000);
+    updateDayBadge();
+    unlockMilestoneIfNeeded();
+    updateStatusLineSmart();
+    scheduleNextMidnightRefresh();
+  }, delay);
 }
-setInterval(createHeart, 2000);
 
-document.getElementById("rabbit").onclick = (e) => {
-  const p = document.createElement("div");
-  p.className = "heart-particle";
-  p.innerText = "❤️";
-  p.style.left = e.clientX + "px"; p.style.top = e.clientY + "px";
-  document.body.appendChild(p);
-  setTimeout(() => p.remove(), 1000);
-  speak(["哎呀！", "被抓到了", "想我了吗？", "嘿嘿"][Math.floor(Math.random()*4)]);
-  incrementCount();
+/* =========================================================
+   ✅ 隐藏成就：23/01/2027 点击兔兔（保留原设定）
+   ========================================================= */
+function isSameYMD(a, b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+const SECRET_ACH = {
+  id: "jan23_2027_520",
+  date: new Date(2027, 0, 23),
+  requireDaysTogether: 520,
+  slotId: "slotSecret",
+  icon: "🕳️✨",
+  toast: "🕳️ 你在 23/01/2027 点了兔兔，而且我们已经一年了…（被你抓到了）",
+  letterHTML:
+    "<h3>🕳️ 兔子洞·隐藏成就</h3>" +
+    "<p>这一下点击，是专属暗号。</p>" +
+    "<p><b>23/01/2027</b>，而且我们已经走到 <b>520 天</b>。</p>" +
+    "<p>你一出现，兔兔就认得你。🐇💞</p>"
 };
+function secretKey(id){ return `secret_achv_${id}_unlocked_v1`; }
 
-// Initial state
-const dayDiff = Math.floor((new Date() - new Date(2026,0,23)) / 86400000) + 1;
-document.getElementById("dayBadge").innerText = `💞 第 ${dayDiff} 天`;
+function updateSecretTooltip(){
+  const slot = $(SECRET_ACH.slotId);
+  if (!slot) return;
+
+  let unlocked = false;
+  try { unlocked = (localStorage.getItem(secretKey(SECRET_ACH.id)) === "1"); } catch(e){}
+
+  if (unlocked) {
+    bindTooltip(slot, () => "✅ 已解锁：点击查看隐藏成就");
+  } else {
+    bindTooltip(slot, () => "🕳️ 隐藏成就：在 23/01/2027 点击兔兔，并且在一起 ≥ 520 天");
+  }
+}
+
+function unlockSecretAchievement(def){
+  try { if (localStorage.getItem(secretKey(def.id)) === "1") return; } catch(e){}
+  try { localStorage.setItem(secretKey(def.id), "1"); } catch(e){}
+
+  const slot = $(def.slotId);
+  if (slot){
+    slot.classList.remove("locked");
+    slot.classList.add("unlocked");
+    slot.textContent = def.icon || "✨";
+    setAchvBehavior(slot, "✅ 已解锁：点击查看隐藏成就", () => {
+      letterContent.innerHTML = def.letterHTML;
+      overlay.style.display = "flex";
+    });
+  }
+
+  speak(def.toast || "✨ 解锁隐藏成就！", "🕳️ 兔子洞被打开了…");
+  triggerMood();
+
+  letterContent.innerHTML = def.letterHTML;
+  overlay.style.display = "flex";
+}
+
+function restoreSecretAchievement(){
+  const slot = $(SECRET_ACH.slotId);
+  if (!slot) return;
+
+  let unlocked = false;
+  try { unlocked = (localStorage.getItem(secretKey(SECRET_ACH.id)) === "1"); } catch(e){}
+
+  if (unlocked){
+    slot.classList.remove("locked");
+    slot.classList.add("unlocked");
+    slot.textContent = SECRET_ACH.icon;
+    setAchvBehavior(slot, "✅ 已解锁：点击查看隐藏成就", () => {
+      letterContent.innerHTML = SECRET_ACH.letterHTML;
+      overlay.style.display = "flex";
+    });
+  } else {
+    // keep locked look + explain on click
+    setAchvBehavior(slot, "🕳️ 隐藏成就：满足条件才会出现", () => {
+      speak("🕳️ 还没到时候哦…（隐藏成就要满足条件）", "🕳️ 兔子洞还没打开…");
+    });
+  }
+}
+
+function checkSecretOnRabbitClick(){
+  const today = new Date();
+  const dt = daysTogether();
+  if (isSameYMD(today, SECRET_ACH.date) && dt >= SECRET_ACH.requireDaysTogether){
+    unlockSecretAchievement(SECRET_ACH);
+  }
+}
+
+/* Rabbit click */
+rabbitEl.addEventListener("click", () => {
+  checkSecretOnRabbitClick();
+  interact();
+});
+rabbitEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    checkSecretOnRabbitClick();
+    interact();
+  }
+});
+
+/* ========= Start ========= */
+restoreSecretAchievement();
+updateSecretTooltip();
+
+updateEnvironment();
 checkAchievements(false);
 
-const hr = new Date().getHours();
-const greeting = hr < 5 ? "熬夜不好哦 🌙" : hr < 11 ? "早安，老公 🌅" : hr < 17 ? "下午好呀 🌤️" : "晚安，梦里见 🌙";
-document.getElementById("greetingTitle").innerText = greeting;
+updateDayBadge();
+unlockMilestoneIfNeeded();
+updateStatusLineSmart();
+scheduleNextMidnightRefresh();
+setInterval(updateDayBadge, 30000);
 </script>
 </body>
 </html>
