@@ -92,46 +92,6 @@ h1{margin:0; font-size:clamp(22px, 6vw, 32px); line-height:1.2; transition: 0.35
   border:1px solid rgba(255,255,255,0.18);
 }
 
-/* ===== COUPLE GAME UI (小小养成UI，不删你功能) ===== */
-.game-ui{
-  margin-top: 8px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
-}
-.stat-pill{
-  display:flex; gap:10px; align-items:center; justify-content:flex-start;
-  padding: 10px 12px;
-  border-radius: 18px;
-  background: var(--glass);
-  border: 1px solid rgba(255,255,255,0.14);
-}
-.stat-pill b{font-size:12px}
-.xp{
-  width: 100%;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.10);
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.12);
-}
-.xp > i{
-  display:block;
-  height:100%;
-  width: 0%;
-  background: linear-gradient(90deg, rgba(251,192,45,0.95), rgba(124,58,237,0.95));
-}
-.coin{
-  display:flex; align-items:center; justify-content:center;
-  min-width: 96px;
-  padding: 10px 12px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.18);
-  font-weight: 800;
-}
-
 /* ===== GLASS CARDS ===== */
 .card{
   margin-top:16px;
@@ -368,16 +328,6 @@ footer{
       <h1 id="greetingTitle">💘 你好呀</h1>
       <div class="sub">这是属于我们的秘密基地</div>
 
-      <div class="game-ui" aria-label="情侣养成UI">
-        <div class="stat-pill">
-          <b id="levelText">Lv. 1</b>
-          <div class="xp" aria-label="亲密度进度">
-            <i id="xpBar"></i>
-          </div>
-        </div>
-        <div class="coin" aria-label="心动币">💞 <span id="coinText">0</span></div>
-      </div>
-
       <div id="statusLine" style="font-size: 12px; color: var(--gold); margin-top: 6px; font-weight: 600;">
         🐰 兔兔正在等你...
       </div>
@@ -482,9 +432,6 @@ const overlay = $("overlay");
 const letterContent = $("letterContent");
 const dayBadge = $("dayBadge");
 const rabbitEl = $("rabbit");
-const levelText = $("levelText");
-const xpBar = $("xpBar");
-const coinText = $("coinText");
 
 /* =========================================================
    1) Tooltip (hover + tap safe)
@@ -545,26 +492,8 @@ function updateCount(){
   count = clamp(count + 1, 0, 9999999);
   countEl.textContent = count;
   persistCount();
-  updateCoupleGameUI();
   checkClickAchievements(true);
 }
-
-/* =========================================================
-   3) Couple Game UI (养成数值，不影响你原功能)
-   - Lv = 每 50 次点击升一级
-   - XP = 当前等级进度
-   - 心动币 = count（示意，可改）
-   ========================================================= */
-function updateCoupleGameUI(){
-  const level = Math.floor(count / 50) + 1;
-  const cur = count % 50;
-  const pct = (cur / 50) * 100;
-
-  levelText.textContent = `Lv. ${level}`;
-  xpBar.style.width = pct.toFixed(1) + "%";
-  coinText.textContent = String(count);
-}
-updateCoupleGameUI();
 
 /* =========================================================
    4) Visual mood / environment
