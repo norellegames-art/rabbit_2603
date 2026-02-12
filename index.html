@@ -393,6 +393,7 @@ footer{
       <div class="achievement-slot locked" id="slot99" tabindex="0" aria-label="成就 99">🌹</div>
       <div class="achievement-slot locked" id="slot520" tabindex="0" aria-label="成就 520">💎</div>
       <div class="achievement-slot locked" id="slot999" tabindex="0" aria-label="成就 999">👑</div>
+      <div class="achievement-slot locked" id="slot1314" tabindex="0" aria-label="成就 1314">💍</div>
       <div class="achievement-slot locked" id="slot2301" tabindex="0" aria-label="成就 2301">✨</div>
       <div class="achievement-slot locked" id="slot2409" tabindex="0" aria-label="成就 2409">🍰</div>
       <div class="achievement-slot locked" id="slot2603" tabindex="0" aria-label="成就 2603">🎂</div>
@@ -1020,13 +1021,13 @@ document.querySelectorAll("button[data-monologue]").forEach(btn => {
 /* =========================================================
    7) Click achievements (99/520/999/2301/2409/2603)
    ========================================================= */
-const CLICK_ACH = [99, 520, 999, 2301, 2409, 2603];
+const CLICK_ACH = [99, 520, 999, 1314, 2301, 2409, 2603];
 
 function openLetter(m){
   const letters = {
     99: `
       <h3>🌹 长长久久勋章</h3>
-      <p><b>“九九和久久谐音，”</b></p>
+      <p>九九和久久谐音，</p>
       <p>所以大家送玫瑰，都喜欢送 99 朵。</p>
       <p>可我不需要 99 朵玫瑰，</p>
       <p>我只希望我们可以一直久久。</p>
@@ -1057,6 +1058,21 @@ function openLetter(m){
       <p>那就别再计算天数了，</p>
       <p>我们在一起，一辈子吧。</p>
     `,
+	1314: `
+ 	 <h3>💍 这生这世 · 1314</h3>
+	  <p><b>1314，谐音是一生一世。</b></p>
+	  <p>可我其实更喜欢——<br>三生三世。</p>
+	  <p>如果真的有轮回，<br>
+  		我希望每一次遇见的人，都是你。</p>
+	  <p>也许这一世未必圆满，<br>
+  		也许故事还在继续，<br>
+  		但总会有某一世——<br>
+  		我们会走到一个完美的结局。</p>
+	  <p>就像你说的平行时空一样。<br>
+  		在某个世界里，<br>
+  		我们一定好好在一起。</p>
+	`,
+
     2301: `
       <h3>✨ 初遇纪念（First Meeting）</h3>
       <p>23.01.2026</p>
