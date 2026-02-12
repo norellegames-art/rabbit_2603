@@ -6,277 +6,344 @@
 <title>兔子的兔子洞 🐰</title>
 
 <style>
-/* ===================== THEME ===================== */
+/* =====================================================
+   🎮 情侣养成游戏 UI · 全局变量
+   ===================================================== */
 :root{
-  --bg1:#0a0f2a; --bg2:#120b24;
-  --purple:#7c3aed; --red:#dc2626;
-  --gold:#fbc02d;
+  --purple:#7c3aed;
+  --red:#dc2626;
+  --bg1:#0a0f2a;
+  --bg2:#120b24;
   --text:rgba(255,255,255,.96);
   --muted:rgba(220,220,255,.65);
+  --gold:#fbc02d;
 }
-*{box-sizing:border-box}
-html,body{margin:0;height:100%}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; padding:0; height:100%; }
+
+/* =====================================================
+   🌌 背景
+   ===================================================== */
 body{
-  font-family:system-ui,-apple-system,sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   color:var(--text);
   background:
-    radial-gradient(800px 600px at 20% 20%, rgba(124,58,237,.3), transparent 60%),
-    linear-gradient(160deg,var(--bg1),var(--bg2));
+    radial-gradient(900px 600px at 15% 15%, rgba(124,58,237,.3), transparent 60%),
+    radial-gradient(800px 600px at 50% 90%, rgba(220,38,38,.25), transparent 60%),
+    linear-gradient(160deg, var(--bg1), var(--bg2));
 }
 
-/* ===================== LAYOUT ===================== */
-.wrap{max-width:600px;margin:auto;padding:18px}
-.card{
-  margin-top:16px;
-  padding:18px;
-  border-radius:24px;
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.15);
-  backdrop-filter:blur(10px);
+/* 装饰层一律不吃点击 */
+.mood-glow,
+.tooltip,
+.heart-particle{
+  pointer-events:none !important;
 }
-header{display:flex;justify-content:space-between;gap:12px}
+
+/* =====================================================
+   📦 布局
+   ===================================================== */
+.wrap{
+  max-width:600px;
+  margin:0 auto;
+  padding:20px 16px 80px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+h1{ margin:0; font-size:26px; }
+.sub{ font-size:13px; color:var(--muted); }
+
 .badge{
-  padding:6px 14px;
+  padding:8px 16px;
   border-radius:999px;
   font-size:12px;
-  background:rgba(255,255,255,.1);
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
 }
 
-/* ===================== RABBIT ===================== */
-.pet-top{display:flex;flex-direction:column;align-items:center;min-height:360px}
-.canvas{width:260px;height:230px;outline:none}
-.rabbit-img{
-  width:100%;height:100%;
-  object-fit:contain;
-  pointer-events:none;
-  filter:drop-shadow(0 10px 20px rgba(0,0,0,.4));
+/* =====================================================
+   🐰 兔兔区
+   ===================================================== */
+.pet-top{
+  margin-top:20px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
+
 #petBubble{
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  padding:14px 22px;
+  border-radius:20px;
+  background:rgba(15,15,35,.95);
+  border:1.5px solid var(--gold);
   opacity:0;
-  margin-bottom:10px;
-  padding:12px 18px;
-  border-radius:16px;
-  border:1px solid var(--gold);
-  background:#0a0a1a;
   transition:.3s;
+  z-index:100;
 }
-#petBubble.show{opacity:1}
+#petBubble.show{ opacity:1; transform:translateX(-50%) translateY(20px); }
 
-/* ===================== CONTROLS ===================== */
+/* ⚠️ 强制兔兔为最高点击层 */
+#rabbit{
+  position:relative;
+  z-index:999;
+  cursor:pointer;
+}
+#rabbit, #rabbit *{
+  pointer-events:auto !important;
+}
+
+.rabbit-img{
+  width:260px;
+  height:230px;
+  object-fit:contain;
+  filter:drop-shadow(0 18px 30px rgba(0,0,0,.4));
+}
+
+/* 弹跳 */
+@keyframes bounce{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.06) translateY(-12px); }
+}
+#rabbit.pet-react .rabbit-img{
+  animation:bounce .4s ease;
+}
+
+/* =====================================================
+   ❤️ 心动计数
+   ===================================================== */
+.counter{
+  margin-top:16px;
+  padding:8px 20px;
+  border-radius:999px;
+  background:rgba(255,255,255,.1);
+  display:flex;
+  gap:8px;
+  font-weight:800;
+}
+
+/* =====================================================
+   🎛️ 按钮
+   ===================================================== */
 .controls{
+  margin-top:20px;
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:12px;
 }
-button,a{
+
+button{
   padding:14px;
-  border-radius:16px;
+  border-radius:18px;
   border:1px solid rgba(255,255,255,.2);
-  background:rgba(255,255,255,.05);
-  color:#fff;
-  text-decoration:none;
-  cursor:pointer;
+  background:rgba(255,255,255,.06);
+  color:white;
+  font-size:14px;
 }
 button.primary{
   background:linear-gradient(135deg,var(--purple),var(--red));
   border:none;
-  font-weight:700;
 }
 
-/* ===================== ACHIEVEMENTS ===================== */
-.achievements-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.achievement-slot{
-  width:64px;height:64px;
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:26px;
-  background:rgba(0,0,0,.2);
-  border:2px dashed rgba(255,255,255,.2);
+/* =====================================================
+   🏆 成就
+   ===================================================== */
+.achievements{
+  margin-top:24px;
+  display:flex;
+  justify-content:space-around;
+  flex-wrap:wrap;
+  gap:12px;
 }
-.achievement-slot.unlocked{
+.achievement{
+  width:68px;
+  height:68px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  border:2px dashed rgba(255,255,255,.15);
+  opacity:.3;
+}
+.achievement.unlocked{
+  opacity:1;
   border:2px solid var(--gold);
   background:rgba(124,58,237,.25);
 }
 
-/* ===================== MODAL ===================== */
+/* =====================================================
+   📜 弹窗
+   ===================================================== */
 #overlay{
+  position:fixed;
+  inset:0;
   display:none;
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.8);
-  align-items:center;justify-content:center;
+  background:rgba(0,0,0,.85);
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
 }
 #letterBox{
-  max-width:420px;
-  padding:30px;
-  border-radius:24px;
   background:#fff;
   color:#333;
+  padding:32px;
+  border-radius:28px;
+  max-width:420px;
 }
-.letter-close{float:right;cursor:pointer;font-size:24px}
+.close{
+  position:absolute;
+  top:16px;
+  right:20px;
+  font-size:26px;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
+
 <div class="wrap">
 
 <header>
   <div>
-    <h2 id="greetingTitle">💘 你好呀</h2>
-    <div id="statusLine" style="font-size:13px;color:var(--gold)">🐰 兔兔在等你</div>
+    <h1 id="title">💘 你好呀</h1>
+    <div class="sub" id="status">兔兔在等你</div>
   </div>
-  <div class="badge" id="dayBadge">💞 在一起的第 0 天</div>
+  <div class="badge" id="dayBadge">💞 在一起的第 1 天</div>
 </header>
 
-<!-- ===================== RABBIT ===================== -->
-<section class="card">
-  <div class="pet-top">
-    <div id="petBubble"></div>
-    <div class="canvas" id="rabbit" tabindex="0">
-      <img src="rabbit1.png" class="rabbit-img" alt="兔兔">
-    </div>
-    <div style="margin-top:10px;font-size:20px">❤️ <span id="loveCount">0</span></div>
+<!-- 🐰 兔兔 -->
+<div class="pet-top">
+  <div id="petBubble"></div>
+  <div id="rabbit">
+    <img src="rabbit1.png" class="rabbit-img" />
   </div>
-</section>
+  <div class="counter">❤️ <span id="count">0</span></div>
+</div>
 
-<!-- ===================== BUTTONS ===================== -->
-<section class="card">
-  <div class="controls">
-    <button class="primary" data-mono="husband">❤️ 老公</button>
-    <button data-mono="miss">🥺 想你了</button>
-    <button data-mono="sweet">🍬 说点甜的</button>
-    <button data-mono="sexy">🔥 撩我</button>
-    <button data-mono="tease">😼 逗你</button>
-    <button data-mono="daily">☀️ 日常</button>
-  </div>
-</section>
+<!-- 🎛️ 按钮 -->
+<div class="controls">
+  <button class="primary" data-key="husband">❤️ 老公</button>
+  <button data-key="miss">🥺 想你了</button>
+  <button data-key="sweet">🍬 说点甜的</button>
+  <button data-key="sexy">🔥 骚母狗</button>
+  <button data-key="tease">😼 逗逗你</button>
+  <button data-key="daily">☀️ 日常碎碎念</button>
+</div>
 
-<!-- ===================== LINKS ===================== -->
-<section class="card">
-  <div class="controls">
-    <a href="https://open.spotify.com" target="_blank">🎵 Spotify</a>
-    <a href="https://discord.com" target="_blank">💬 Discord</a>
-  </div>
-</section>
-
-<!-- ===================== ACHIEVEMENTS ===================== -->
-<section class="card">
-  <div class="achievements-grid">
-    <div class="achievement-slot locked" id="slot99">🌹</div>
-    <div class="achievement-slot locked" id="slot520">💎</div>
-    <div class="achievement-slot locked" id="slot999">👑</div>
-    <div class="achievement-slot locked" id="slot2301">✨</div>
-    <div class="achievement-slot locked" id="slot2409">🍰</div>
-    <div class="achievement-slot locked" id="slot2603">🎂</div>
-    <div class="achievement-slot locked" id="slotSecret">🕳️</div>
-  </div>
-</section>
+<!-- 🏆 成就 -->
+<div class="achievements">
+  <div class="achievement" id="a99">🌹</div>
+  <div class="achievement" id="a520">💎</div>
+  <div class="achievement" id="a999">👑</div>
+  <div class="achievement" id="a2301">✨</div>
+  <div class="achievement" id="a2409">🍰</div>
+  <div class="achievement" id="a2603">🎂</div>
+  <div class="achievement" id="aSecret">🕳️</div>
+</div>
 
 </div>
 
-<!-- ===================== MODAL ===================== -->
+<!-- 📜 弹窗 -->
 <div id="overlay">
   <div id="letterBox">
-    <span class="letter-close" id="closeLetter">×</span>
-    <div id="letterContent"></div>
+    <div class="close" onclick="closeLetter()">×</div>
+    <div id="letter"></div>
   </div>
 </div>
 
 <script>
-"use strict";
+/* =====================================================
+   📦 状态
+   ===================================================== */
+const $ = id => document.getElementById(id);
+let count = Number(localStorage.getItem("love")||0);
+$("count").innerText = count;
 
-/* ===================== HELPERS ===================== */
-function $(id){return document.getElementById(id)}
-function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
+/* =====================================================
+   📅 在一起天数（23/01/2026）
+   ===================================================== */
+const START = new Date(2026,0,23);
+function daysTogether(){
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  const s = new Date(START);
+  s.setHours(0,0,0,0);
+  return Math.floor((d-s)/86400000)+1;
+}
+$("dayBadge").innerText = `💞 在一起的第 ${daysTogether()} 天`;
 
-/* ===================== STATE ===================== */
-var count = Number(localStorage.getItem("rabbit_count")||0);
-$("loveCount").textContent = count;
-
-/* ===================== DATA ===================== */
-var REACTIONS = [
-  "刚刚想到你。",
-  "你靠太近了。",
-  "我会乱。",
-  "你是不是故意的？",
-  "我有点离不开你了。"
-];
-
-var MONO = {
-  husband:["老公～我想你了。","老公你抱我。"],
-  miss:["我在想你。","现在就想见你。"],
-  sweet:["你是我的偏爱。","我只对你这样。"],
-  sexy:["你别这样看我。","我会失控的。"],
-  tease:["你点这个干嘛～","被我抓到了。"],
-  daily:["记得吃饭。","我一直在。"]
-};
-
-/* ===================== CORE ===================== */
+/* =====================================================
+   🐰 说话
+   ===================================================== */
 function speak(text){
+  $("petBubble").innerText=text;
+  $("petBubble").classList.add("show");
+  $("rabbit").classList.remove("pet-react");
+  void $("rabbit").offsetWidth;
+  $("rabbit").classList.add("pet-react");
+
   count++;
-  localStorage.setItem("rabbit_count",count);
-  $("loveCount").textContent = count;
-  var b=$("petBubble");
-  b.textContent=text;
-  b.classList.add("show");
-  setTimeout(function(){b.classList.remove("show")},2000);
+  localStorage.setItem("love",count);
+  $("count").innerText=count;
+
+  setTimeout(()=> $("petBubble").classList.remove("show"),2200);
   checkAchievements();
 }
 
-function interact(){
-  speak(rand(REACTIONS));
-}
-
-/* ===================== EVENTS ===================== */
-$("rabbit").onclick = interact;
-$("rabbit").onkeydown=function(e){
-  if(e.key==="Enter"||e.key===" "){e.preventDefault();interact()}
+/* =====================================================
+   🎛️ 按钮逻辑
+   ===================================================== */
+const POOL={
+  husband:["老公～我在","老公别走","我只黏你"],
+  miss:["我想你","靠过来","别离我太远"],
+  sweet:["你是偏爱","只想对你软"],
+  sexy:["再靠近一点","我不想乖"],
+  tease:["被我抓到了","你逃不掉"],
+  daily:["记得喝水","我陪你"]
 };
-
-document.querySelectorAll("button[data-mono]").forEach(function(btn){
-  btn.onclick=function(){
-    speak(rand(MONO[btn.dataset.mono]));
-  };
+document.querySelectorAll("button[data-key]").forEach(b=>{
+  b.addEventListener("pointerdown",()=>{
+    const p=POOL[b.dataset.key];
+    speak(p[Math.floor(Math.random()*p.length)]);
+  });
 });
 
-/* ===================== DAYS ===================== */
-var START=new Date(2026,0,26);
-function daysTogether(){
-  var d=new Date();d.setHours(0,0,0,0);
-  var s=new Date(START);s.setHours(0,0,0,0);
-  var diff=d-s;
-  return diff<0?0:Math.floor(diff/86400000)+1;
-}
-function updateDay(){
-  $("dayBadge").textContent="💞 在一起的第 "+daysTogether()+" 天";
-}
-updateDay();
-setInterval(updateDay,60000);
+/* =====================================================
+   🐰 兔兔点击（核心）
+   ===================================================== */
+$("rabbit").addEventListener("pointerdown",(e)=>{
+  e.preventDefault();
+  speak("你摸到我了。");
+});
 
-/* ===================== ACHIEVEMENTS ===================== */
-var ACH=[99,520,999,2301,2409,2603];
+/* =====================================================
+   🏆 成就
+   ===================================================== */
+function unlock(id){ $(id).classList.add("unlocked"); }
 function checkAchievements(){
-  ACH.forEach(function(n){
-    var slot=$("slot"+n);
-    if(count>=n){
-      slot.classList.add("unlocked");
-      slot.onclick=function(){
-        $("letterContent").innerHTML="<h3>成就 "+n+"</h3>";
-        $("overlay").style.display="flex";
-      };
-    }
-  });
+  if(count>=99) unlock("a99");
+  if(count>=520) unlock("a520");
+  if(count>=999) unlock("a999");
 }
 
-/* ===================== MODAL ===================== */
-$("closeLetter").onclick=function(){
-  $("overlay").style.display="none";
-};
-$("overlay").onclick=function(e){
-  if(e.target===this)this.style.display="none";
-};
-
-checkAchievements();
+/* =====================================================
+   📜 弹窗
+   ===================================================== */
+function closeLetter(){ $("overlay").style.display="none"; }
 </script>
+
 </body>
 </html>
-
