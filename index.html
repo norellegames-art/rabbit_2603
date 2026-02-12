@@ -347,12 +347,16 @@ footer{
     <div style="font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 12px; letter-spacing: 2px; text-transform: uppercase;">
       成就收集馆
     </div>
-    <div class="achievements-grid">
-      <div class="achievement-slot locked" id="slot26" role="button" tabindex="0" aria-label="成就 26">🎂</div>
-      <div class="achievement-slot locked" id="slot99" role="button" tabindex="0" aria-label="成就 99">🌹</div>
-      <div class="achievement-slot locked" id="slot520" role="button" tabindex="0" aria-label="成就 520">💎</div>
-      <div class="achievement-slot locked" id="slotSecret" role="button" tabindex="0" aria-label="隐藏成就">🕳️</div>
+      <div class="achievements-grid">
+      <div class="achievement-slot locked" id="slot99" tabindex="0">🌹</div>
+      <div class="achievement-slot locked" id="slot520" tabindex="0">💎</div>
+      <div class="achievement-slot locked" id="slot999" tabindex="0">👑</div>
+      <div class="achievement-slot locked" id="slot2301" tabindex="0">✨</div>
+      <div class="achievement-slot locked" id="slot2409" tabindex="0">🍰</div>
+      <div class="achievement-slot locked" id="slot2603" tabindex="0">🎂</div>
+      <div class="achievement-slot locked" id="slotSecret" tabindex="0">🕳️</div>
     </div>
+
   </section>
 
   <!-- Modal -->
@@ -621,10 +625,58 @@ function interact() {
 /* ========= 3) ACHIEVEMENTS（点击计数成就） ========= */
 function openLetter(m) {
   const letters = {
-    26: "<h3>🎂 0326 生日密函</h3><p>亲爱的主人：</p><p>今天是 0326，是你来到这个世界最特别的日子。</p><p>这只小兔子代表我，会一直陪在你身边。愿你新的一岁眼里有星辰，身边有暖阳。✨</p>",
-    99: "<h3>🌹 长长久久</h3><p>99 次点击，代表我对你的爱长长久久。</p><p>不管未来有多少个 99 天，我都想牵着你的手一直走下去。❤️</p>",
-    520:"<h3>💎 极致告白</h3><p>520 次点击是你耐心的证明，也是我真心的承诺。</p><p>你是我唯一的宝藏。此生无憾，我爱你。💍</p>"
+    99: `
+      <h3>🌹 长长久久勋章</h3>
+      <p><b>“我们要一起走的路，进度条才刚开始呢。”</b></p>
+      <p>99 代表长久，也代表我对你的耐心和偏爱。</p>
+      <p>虽然我有时候有点小脾气，但我想陪你走过每一个 99。</p>
+      <p>不许中途掉队，听到了吗？</p>
+    `,
+    520: `
+      <h3>💎 直球告白奖励</h3>
+      <p><b>“滴！心动检测报告：”</b></p>
+      <p>恭喜解锁 520 奖励。</p>
+      <p>在这个全世界都在说爱你的日子，我决定简单粗暴一点：</p>
+      <p><b>我爱你，而且只爱你。</b></p>
+      <p>这个成就的有效期是——永久。</p>
+    `,
+    999: `
+      <h3>👑 至尊真爱大奖</h3>
+      <p><b>“恭喜获得：全服唯一限定爱人认证。”</b></p>
+      <p>999 是最高级的浪漫。</p>
+      <p>感谢你在这个并不完美的世界里，给了我最完美的守护。</p>
+      <p>你是我的超级英雄，也是我永远想赖着的港湾。</p>
+      <p><b>爱你久久！</b></p>
+    `,
+    2301: `
+      <h3>✨ 初遇纪念（First Meeting）</h3>
+      <p><b>成就达成：【命中注定的相遇】</b></p>
+      <p>此时此刻，世界线发生了变动。</p>
+      <p>感谢那天你出现在我的视野里，让我的生活从此开启了高甜模式。</p>
+      <p>遇见你，是我这辈子最欧气（好运）的时刻！</p>
+    `,
+    2409: `
+      <h3>🍰 你的生日（Your Birthday）</h3>
+      <p><b>成就达成：【全宇宙最可爱降临】</b></p>
+      <p>今天是你作为我男朋友陪我过的生日。</p>
+      <p>这份福气就送给你啦！</p>
+      <p>谢谢你一直宠着这个奇奇怪怪的我。</p>
+      <p>余生请继续努力，争取全成就满分通关！</p>
+    `,
+    2603: `
+      <h3>🎂 他的生日（His Birthday）</h3>
+      <p><b>成就达成：【人间理想·升级日】</b></p>
+      <p>恭喜你又升级啦！</p>
+      <p>虽然等级加了 1，但在我心里你永远是那个最帅的初始玩家。</p>
+      <p>生日快乐。</p>
+      <p>继续保持对我“单向奔赴”的特权哦，爱你！</p>
+    `
   };
+
+  letterContent.innerHTML = letters[m] || "";
+  overlay.style.display = "flex";
+}
+
 
   letterContent.innerHTML = letters[m] || "";
   overlay.style.display = "flex";
@@ -646,9 +698,11 @@ function setAchvBehavior(slot, tooltipText, onActivate){
   };
 }
 
+const ACHIEVEMENTS = [99, 520, 999, 2301, 2409, 2603];
+
 function checkAchievements(autoOpen = false) {
-  [26, 99, 520].forEach((m) => {
-    const slot = $("slot" + m);
+  ACHIEVEMENTS.forEach((m) => {
+    const slot = document.getElementById("slot" + m);
     if (!slot) return;
 
     if (count >= m) {
@@ -657,19 +711,22 @@ function checkAchievements(autoOpen = false) {
         slot.classList.add("unlocked");
         if (autoOpen) openLetter(m);
       }
-      setAchvBehavior(
-        slot,
-        `✅ 已解锁：点击查看（${m} 次点击成就）`,
-        () => openLetter(m)
-      );
+
+      bindTooltip(slot, () => `✅ 已解锁：${m} 次点击`);
+      slot.onclick = (e) => {
+        e.stopPropagation();
+        openLetter(m);
+      };
     } else {
-      setAchvBehavior(
-        slot,
-        `🔒 解锁于 ${m} 次点击（当前 ${count}）`,
-        () => speak(`还差 ${m - count} 次点击解锁。现在是 ${count} 次。`, "✨ 兔兔在数数…")
-      );
+      bindTooltip(slot, () => `🔒 解锁于 ${m} 次点击`);
+      slot.onclick = (e) => {
+        e.stopPropagation();
+        speak(`还需要 ${m - count} 次点击解锁。`, "✨ 兔兔在数数…");
+      };
     }
   });
+}
+
 
   updateSecretTooltip();
 }
