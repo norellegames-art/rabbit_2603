@@ -363,7 +363,6 @@ footer{
   <footer>距离不会削弱爱，只会证明它 💌</footer>
 </div>
 
-<!-- tooltip -->
 <div id="tooltip" class="tooltip" aria-hidden="true"></div>
 
 <script>
@@ -436,7 +435,7 @@ const isBirthday = (nowDate.getMonth() === 2 && nowDate.getDate() === 26);
 
 /* ===== Unified rabbit reactions ===== */
 const RABBIT_REACTIONS = [
-  "刚刚想到你一下
+  "刚刚想到你一下",
   "不知道为什么会想到你",
   "你现在在干嘛",
   "我好像有点在意你",
@@ -538,7 +537,7 @@ const MONOLOGUE_POOLS = {
   "老公～你会不会觉得我可爱",
   "老公～我只在你面前这样",
   "老公～你是不是最疼我",
-  "老公～我有点离不开你",
+  "老公～我有点离离开你",
   "老公～你要记得回我",
   "老公～我这样是不是太明显",
   "老公～你别不理我",
@@ -553,7 +552,7 @@ const MONOLOGUE_POOLS = {
   "老公～你别突然靠这么近",
   "老公～我会乱想的",
   "老公～你是不是喜欢我这么黏",
-  "老公～我一靠近你就不想走",
+  "老公～一靠近你就不想走",
   "老公～你这样我会腿软掉",
   "老公～你不许推开我",
   "老公～我现在只想你抱着",
@@ -846,9 +845,9 @@ document.querySelectorAll("button[data-monologue]").forEach(attachHeartTo);
 
 /* =========================================================
    ✅ 在一起天数（最终正确版）
-   起始：26/01/2026（当天 = 第 1 天）
+   起始：23/01/2026（当天 = 第 1 天）
    ========================================================= */
-const TOGETHER_START = new Date(2026, 0, 23); // Jan=0
+const TOGETHER_START = new Date(2026, 0, 23); // Corrected logic: Jan is 0
 const START_STR = "23/01/2026";
 
 function startOfDay(d){
@@ -902,7 +901,7 @@ function updateStatusLineSmart(){
   if (statusTimer) return;
   const day = daysTogether();
   const ms = getMilestone(day);
-  if (ms?.status) { statusLine.textContent = ms.status; return; }
+  if (ms && ms.status) { statusLine.textContent = ms.status; return; }
   if (Math.random() < 0.35) statusLine.textContent = DAILY_LINES[Math.floor(Math.random() * DAILY_LINES.length)];
 }
 
@@ -952,7 +951,7 @@ function isSameYMD(a, b){
 const SECRET_ACH = {
   id: "jan23_2027_520",
   date: new Date(2027, 0, 23),
-  requireDaysTogether: 520,
+  requireDaysTogether: 365, // Adjusting logic: 1 year of being together
   slotId: "slotSecret",
   icon: "🕳️✨",
   toast: "🕳️ 你在 23/01/2027 点了兔兔，而且我们已经一年了…（被你抓到了）",
