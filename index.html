@@ -916,7 +916,6 @@ const SECRET_ACH = {
   letterHTML:
     "<h3>🕳️ 兔子洞·隐藏成就</h3>" +
     "<p>这一下点击，是专属暗号。</p>" +
-    "<p><b>23/01/2027</b>，而且我们已经走到 <b>520 天</b>。</p>" +
     "<p>你一出现，兔兔就认得你。🐇💞</p>"
 };
 function secretKey(id){ return `secret_achv_${id}_unlocked_v1`; }
@@ -943,7 +942,7 @@ function updateSecretTooltip(){
   }else{
     setSlotState(slot, false);
     slot.textContent = "🕳️";
-    bindTooltip(slot, () => "🕳️ 隐藏成就：23/01/2027 当天点兔兔 + 在一起 ≥ 520 天");
+    bindTooltip(slot, () => "🕳️ 隐藏成就");
     slot.onclick = (e) => { e.stopPropagation(); speak("🕳️ 还没到时候哦…（隐藏成就要满足条件）", "🕳️ 兔子洞还没打开…"); };
     slot.onkeydown = (e) => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); speak("🕳️ 还没到时候哦…（隐藏成就要满足条件）", "🕳️ 兔子洞还没打开…"); } };
   }
