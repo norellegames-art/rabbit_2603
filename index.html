@@ -550,24 +550,7 @@ function updateCount(){
 }
 
 /* =========================================================
-   3) Couple Game UI (养成数值，不影响你原功能)
-   - Lv = 每 50 次点击升一级
-   - XP = 当前等级进度
-   - 心动币 = count（示意，可改）
-   ========================================================= */
-function updateCoupleGameUI(){
-  const level = Math.floor(count / 50) + 1;
-  const cur = count % 50;
-  const pct = (cur / 50) * 100;
-
-  levelText.textContent = `Lv. ${level}`;
-  xpBar.style.width = pct.toFixed(1) + "%";
-  coinText.textContent = String(count);
-}
-updateCoupleGameUI();
-
-/* =========================================================
-   4) Visual mood / environment
+   3) Visual mood / environment
    ========================================================= */
 const nowDate = new Date();
 const isBirthday = (nowDate.getMonth() === 2 && nowDate.getDate() === 26); // March 26 (保留你原设定)
@@ -619,7 +602,7 @@ function updateEnvironment(){
 setInterval(updateEnvironment, 10000);
 
 /* =========================================================
-   5) Hearts particle
+   4) Hearts particle
    ========================================================= */
 function spawnHeart(x, y){
   if (prefersReduced) return;
@@ -643,7 +626,7 @@ attachHeartTo(rabbitEl);
 document.querySelectorAll("button[data-monologue]").forEach(attachHeartTo);
 
 /* =========================================================
-   6) Rabbit lines + button monologues
+   5) Rabbit lines + button monologues
    ========================================================= */
 const RABBIT_REACTIONS = [
   "刚刚想到你一下。",
@@ -752,7 +735,7 @@ document.querySelectorAll("button[data-monologue]").forEach(btn => {
 });
 
 /* =========================================================
-   7) Click achievements (99/520/999/2301/2409/2603)
+   6) Click achievements (99/520/999/2301/2409/2603)
    ========================================================= */
 const CLICK_ACH = [99, 520, 999, 2301, 2409, 2603];
 
@@ -864,7 +847,7 @@ function checkClickAchievements(autoOpen=false){
 }
 
 /* =========================================================
-   8) Together days (start 23/01/2026, day1)
+   7) Together days (start 23/01/2026, day1)
    ========================================================= */
 const TOGETHER_START = new Date(2026, 0, 23); // ✅ Jan=0, 23/01/2026
 const START_STR = "23/01/2026";
@@ -901,7 +884,7 @@ function updateStatusLineSmart(){
 }
 
 /* =========================================================
-   9) Secret achievement (23/01/2027 click rabbit + days>=520)
+   8) Secret achievement (23/01/2027 click rabbit + days>=520)
    ========================================================= */
 function isSameYMD(a,b){
   return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
@@ -969,7 +952,7 @@ function checkSecretOnRabbitClick(){
 }
 
 /* =========================================================
-   10) Rabbit click handlers (click + keyboard)
+   9) Rabbit click handlers (click + keyboard)
    ========================================================= */
 rabbitEl.addEventListener("click", () => {
   checkSecretOnRabbitClick();
@@ -984,7 +967,7 @@ rabbitEl.addEventListener("keydown", (e) => {
 });
 
 /* =========================================================
-   11) Boot
+   10) Boot
    ========================================================= */
 updateEnvironment();
 updateDayBadge();
